@@ -18,6 +18,7 @@ import {
 import {
   Link,
 } from "react-router-dom";
+import useOurStories from "../hooks/useOurStories";
 
 
 /* =========================================================
@@ -31,82 +32,82 @@ import {
    youtubeId = "ABC123XYZ"
 ========================================================= */
 
-const patientStories = [
-  {
-    id: 1,
+// const patientStories = [
+//   {
+//     id: 1,
 
-    youtubeId: "YOUR_VIDEO_ID_1",
+//     youtubeId: "YOUR_VIDEO_ID_1",
 
-    image:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80",
 
-    title:
-      "Healthcare Journey in India",
+//     title:
+//       "Healthcare Journey in India",
 
-    text:
-      "An international healthcare experience from initial consultation through treatment and recovery.",
-  },
+//     text:
+//       "An international healthcare experience from initial consultation through treatment and recovery.",
+//   },
 
-  {
-    id: 2,
+//   {
+//     id: 2,
 
-    youtubeId: "YOUR_VIDEO_ID_2",
+//     youtubeId: "YOUR_VIDEO_ID_2",
 
-    image:
-      "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1000&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1000&q=80",
 
-    title:
-      "Surgery & Recovery Experience",
+//     title:
+//       "Surgery & Recovery Experience",
 
-    text:
-      "A patient journey through specialist consultation, planned treatment and coordinated recovery.",
-  },
+//     text:
+//       "A patient journey through specialist consultation, planned treatment and coordinated recovery.",
+//   },
 
-  {
-    id: 3,
+//   {
+//     id: 3,
 
-    youtubeId: "YOUR_VIDEO_ID_3",
+//     youtubeId: "YOUR_VIDEO_ID_3",
 
-    image:
-      "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1000&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1000&q=80",
 
-    title:
-      "International Care Experience",
+//     title:
+//       "International Care Experience",
 
-    text:
-      "A patient shares their experience of receiving coordinated healthcare assistance during their visit to India.",
-  },
+//     text:
+//       "A patient shares their experience of receiving coordinated healthcare assistance during their visit to India.",
+//   },
 
-  {
-    id: 4,
+//   {
+//     id: 4,
 
-    youtubeId: "YOUR_VIDEO_ID_4",
+//     youtubeId: "YOUR_VIDEO_ID_4",
 
-    image:
-      "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1000&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1000&q=80",
 
-    title:
-      "Treatment Support Experience",
+//     title:
+//       "Treatment Support Experience",
 
-    text:
-      "A coordinated medical journey with hospital support, treatment guidance and recovery assistance.",
-  },
+//     text:
+//       "A coordinated medical journey with hospital support, treatment guidance and recovery assistance.",
+//   },
 
-  {
-    id: 5,
+//   {
+//     id: 5,
 
-    youtubeId: "YOUR_VIDEO_ID_5",
+//     youtubeId: "YOUR_VIDEO_ID_5",
 
-    image:
-      "https://images.unsplash.com/photo-1516841273335-e39b37888115?auto=format&fit=crop&w=1000&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1516841273335-e39b37888115?auto=format&fit=crop&w=1000&q=80",
 
-    title:
-      "Recovery & Follow-Up Journey",
+//     title:
+//       "Recovery & Follow-Up Journey",
 
-    text:
-      "Support throughout treatment, recovery planning and follow-up care for an international patient.",
-  },
-];
+//     text:
+//       "Support throughout treatment, recovery planning and follow-up care for an international patient.",
+//   },
+// ];
 
 
 /* =========================================================
@@ -872,6 +873,11 @@ function FormField({
 
 function PatientStoriesSlider() {
 
+  const {
+    stories: patientStories = [],
+    loading: storiesLoading,
+    error: storiesError,
+  } = useOurStories();
   const [visibleCount, setVisibleCount] =
     useState(3);
 
@@ -940,9 +946,12 @@ function PatientStoriesSlider() {
      RESET INDEX
   ===================================================== */
 
+  // useEffect(() => {
+  //   setCurrentIndex(0);
+  // }, [visibleCount]);
   useEffect(() => {
-    setCurrentIndex(0);
-  }, [visibleCount]);
+  setCurrentIndex(0);
+}, [visibleCount, patientStories.length]);
 
 
   const shouldSlide =
@@ -1029,6 +1038,7 @@ function PatientStoriesSlider() {
   }, [
     shouldSlide,
     selectedStory,
+    patientStories.length,
   ]);
 
 
@@ -1282,7 +1292,7 @@ function PatientStoriesSlider() {
                 }
               `}
             >
-              {visibleStories.map(
+              {/* {visibleStories.map(
                 (
                   story,
                   position
@@ -1300,7 +1310,28 @@ function PatientStoriesSlider() {
                     }
                   />
                 )
-              )}
+              )} */}
+              {storiesLoading ? (
+  <p className="col-span-full py-12 text-center text-[#263F41]">
+    Loading patient stories...
+  </p>
+) : storiesError ? (
+  <p className="col-span-full py-12 text-center text-red-600">
+    {String(storiesError?.message || storiesError)}
+  </p>
+) : visibleStories.length === 0 ? (
+  <p className="col-span-full py-12 text-center text-[#263F41]">
+    No patient stories available.
+  </p>
+) : (
+  visibleStories.map((story, position) => (
+    <PatientStoryCard
+      key={`${story.id}-${position}`}
+      story={story}
+      onWatch={() => setSelectedStory(story)}
+    />
+  ))
+)}
             </div>
 
 
@@ -1495,8 +1526,8 @@ function PatientStoryCard({
       >
 
         <img
-          src={story.image}
-
+          // src={story.image}
+          src={story.image || story.thumbnail}
           alt={story.title}
 
           className="
@@ -1616,7 +1647,9 @@ function PatientStoryCard({
       {/* CONTENT */}
 
       <div className="p-6">
-
+  <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[#C8942E]">
+    {story.category || "Our Stories"}
+  </p>
         <h3
           className="
             text-[16px]
@@ -1643,7 +1676,8 @@ function PatientStoryCard({
             md:leading-7
           "
         >
-          {story.text}
+          {/* {story.text} */}
+          {story.description || story.text || ""}
         </p>
 
 
@@ -1804,8 +1838,10 @@ function VideoModal({
           "
         >
           <iframe
-            src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
-
+            // src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
+              src={`https://www.youtube.com/embed/${
+                story.youtubeId || story.videoId
+              }?autoplay=1&rel=0`}
             title={story.title}
 
             className="

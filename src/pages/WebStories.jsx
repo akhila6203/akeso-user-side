@@ -135,11 +135,11 @@ export default function WebStories() {
             <p
               className="
                 mx-auto
-                mt-4
+                mt-3
                 max-w-[680px]
-                text-[14px]
+                text-[16px]
                 leading-7
-                text-[#667576]
+                text-[#1e1f1f]
 
                 sm:text-[15px]
               "
@@ -209,7 +209,7 @@ export default function WebStories() {
                   bg-[#064B50]
                   px-7
                   py-3
-                  text-[13px]
+                  text-[14px]
                   font-semibold
                   text-white
                   shadow-[0_8px_22px_rgba(6,75,80,0.14)]

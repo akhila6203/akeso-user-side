@@ -27,6 +27,8 @@ import {
 } from "react-router-dom";
 
 import Breadcrumb from "../components/Breadcrumb";
+import useOurStories from "../hooks/useOurStories";
+import useFaqs from "../hooks/useFaqs";
 
 
 /* =========================================================
@@ -319,159 +321,6 @@ const helpDeskSections = [
 
 
 /* =========================================================
-   PATIENT VIDEO STORIES
-
-   IMPORTANT:
-   These are sample YouTube IDs.
-   Replace youtubeId with your actual approved YouTube video IDs.
-
-   Example:
-   https://www.youtube.com/watch?v=ABC123xyz
-   youtubeId = "ABC123xyz"
-
-   thumbnail can also be your local image:
-   "/images/patient-stories/story-1.jpg"
-========================================================= */
-
-const patientStories = [
-  {
-    id: 1,
-
-    title:
-      "Treatment & Recovery Experience",
-
-    description:
-      "A healthcare journey involving specialist consultation, planned treatment and coordinated recovery.",
-
-    youtubeId:
-      "ysz5S6PUM-U",
-
-    thumbnail:
-      "/images/patient-stories/patient-story-1.jpg",
-  },
-
-  {
-    id: 2,
-
-    title:
-      "International Patient Experience",
-
-    description:
-      "An international patient's experience receiving coordinated support during treatment in India.",
-
-    youtubeId:
-      "jNQXAC9IVRw",
-
-    thumbnail:
-      "/images/patient-stories/patient-story-2.jpg",
-  },
-
-  {
-    id: 3,
-
-    title:
-      "Recovery & Follow-Up Journey",
-
-    description:
-      "A patient experience covering treatment support, recovery planning and medical follow-up.",
-
-    youtubeId:
-      "aqz-KE-bpKQ",
-
-    thumbnail:
-      "/images/patient-stories/patient-story-3.jpg",
-  },
-
-  {
-    id: 4,
-
-    title:
-      "International Care Journey",
-
-    description:
-      "A coordinated healthcare journey from medical review through treatment and follow-up.",
-
-    youtubeId:
-      "ScMzIvxBSi4",
-
-    thumbnail:
-      "/images/patient-stories/patient-story-4.jpg",
-  },
-];
-
-
-/* =========================================================
-   GENERAL FAQ DATA
-========================================================= */
-
-const generalFaqs = [
-  {
-    question:
-      "What medical documents should I send before travelling?",
-
-    answer:
-      "Share recent medical reports, diagnosis documents, scans, investigation results, previous treatment information and your current medication details. This helps the medical team understand your case before your visit.",
-  },
-
-  {
-    question:
-      "Does Akeso arrange flight tickets?",
-
-    answer:
-      "Flights are not included as part of the medical treatment package. The coordination team can, however, provide travel-planning guidance where appropriate.",
-  },
-
-  {
-    question:
-      "Can you assist with a medical visa?",
-
-    answer:
-      "Akeso can assist with coordination and relevant supporting information where applicable. Visa approval remains subject to the respective government authorities.",
-  },
-
-  {
-    question:
-      "Can you arrange airport pickup?",
-
-    answer:
-      "Airport pickup and local transportation coordination can be explored after your travel schedule and treatment plan are confirmed.",
-  },
-
-  {
-    question:
-      "Can my family member travel with me?",
-
-    answer:
-      "A family member or attendant may travel with the patient, subject to applicable visa, travel and hospital requirements.",
-  },
-
-  {
-    question:
-      "How is my hospital selected?",
-
-    answer:
-      "Hospital and specialist coordination is based on the available medical information, required speciality, treatment needs and other relevant requirements.",
-  },
-
-  {
-    question:
-      "What happens after my treatment?",
-
-    answer:
-      "After treatment, the medical team provides discharge and follow-up guidance. Where available, Akeso can also assist with coordination for planned follow-up consultations.",
-  },
-
-  {
-    question:
-      "When should I book my travel?",
-
-    answer:
-      "It is generally better to finalise travel after your medical review, treatment planning and expected hospital schedule have been coordinated.",
-  },
-];
-
-
-/* =========================================================
    HELP DESK ACCORDION
 ========================================================= */
 
@@ -569,9 +418,9 @@ function HelpAccordion({
               max-w-[1000px]
               pb-6
               pr-8
-              text-[15px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-[#242424]
               md:text-[16px]
               md:leading-8
             "
@@ -846,11 +695,15 @@ function PatientStoryCard({
       {/* CONTENT */}
 
       <div className="p-6">
+        {/* SPECIALITY NAME */}
+      <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[#C8942E]">
+        {story.category || "Our Stories"}
+      </p>
         <h3
           className="
             text-[18px]
             font-bold
-            leading-7
+            leading-5
             text-[#064B50]
           "
         >
@@ -860,9 +713,9 @@ function PatientStoryCard({
         <p
           className="
             mt-3
-            text-[15px]
+            text-[16px]
             leading-7
-            text-[#667576]
+            text-[#2d2e2e]
           "
         >
           {story.description}
@@ -878,9 +731,10 @@ function PatientStoryCard({
             inline-flex
             items-center
             gap-2
-            text-[15px]
+            text-[14px]
             font-bold
-            text-[#C8942E]
+            
+            text-[#67a79f]
             transition
             hover:text-[#A9781F]
           "
@@ -1064,7 +918,7 @@ function VideoModal({
               mt-2
               text-[15px]
               leading-7
-              text-[#667576]
+              text-[#2f3030]
             "
           >
             {story.description}
@@ -1081,6 +935,23 @@ function VideoModal({
 ========================================================= */
 
 export default function PatientHelpDesk() {
+  //   const {
+  //   stories: patientStories,
+  //   loading: storiesLoading,
+  //   error: storiesError,
+  // } = useOurStories();
+  const {
+  stories: patientStories = [],
+  loading: storiesLoading,
+  error: storiesError,
+} = useOurStories();
+
+  const {
+    faqs: generalFaqs,
+    loading: faqsLoading,
+    error: faqsError,
+  } = useFaqs();
+
   const [
     activeSectionId,
     setActiveSectionId,
@@ -1179,53 +1050,87 @@ export default function PatientHelpDesk() {
   /* =======================================================
      CIRCULAR STORIES
   ======================================================= */
+const visibleStoryItems = useMemo(() => {
+  if (!Array.isArray(patientStories) || patientStories.length === 0) {
+    return [];
+  }
 
-  const visibleStoryItems =
-    useMemo(() => {
-      return Array.from({
-        length: Math.min(
-          visibleStories,
-          patientStories.length
-        ),
-      }).map(
-        (_, offset) =>
-          patientStories[
-            (
-              storyStart +
-              offset
-            ) %
-              patientStories.length
-          ]
-      );
-    }, [
-      storyStart,
-      visibleStories,
-    ]);
+  return Array.from({
+    length: Math.min(visibleStories, patientStories.length),
+  }).map((_, offset) => {
+    const index =
+      (storyStart + offset) % patientStories.length;
+
+    return patientStories[index];
+  });
+}, [patientStories, storyStart, visibleStories]);
+
+const previousStory = () => {
+  if (!patientStories?.length) return;
+
+  setStoryStart((current) =>
+    (current - 1 + patientStories.length) %
+    patientStories.length
+  );
+};
+
+const nextStory = () => {
+  if (!patientStories?.length) return;
+
+  setStoryStart((current) =>
+    (current + 1) % patientStories.length
+  );
+};
+
+useEffect(() => {
+  setStoryStart(0);
+}, [patientStories?.length]);
+  // const visibleStoryItems =
+  //   useMemo(() => {
+  //     return Array.from({
+  //       length: Math.min(
+  //         visibleStories,
+  //         patientStories.length
+  //       ),
+  //     }).map(
+  //       (_, offset) =>
+  //         patientStories[
+  //           (
+  //             storyStart +
+  //             offset
+  //           ) %
+  //             patientStories.length
+  //         ]
+  //     );
+  //   }, [
+  //     storyStart,
+  //     visibleStories,
+  //   ]);
 
 
-  const previousStory = () => {
-    setStoryStart(
-      (current) =>
-        (
-          current -
-          1 +
-          patientStories.length
-        ) %
-        patientStories.length
-    );
-  };
+  // const previousStory = () => {
+  //   setStoryStart(
+  //     (current) =>
+  //       (
+  //         current -
+  //         1 +
+  //         patientStories.length
+  //       ) %
+  //       patientStories.length
+  //   );
+  // };
 
 
-  const nextStory = () => {
-    setStoryStart(
-      (current) =>
-        (
-          current +
-          1
-        ) %
-        patientStories.length
-    );
-  };
+  // const nextStory = () => {
+  //   setStoryStart(
+  //     (current) =>
+  //       (
+  //         current +
+  //         1
+  //       ) %
+  //       patientStories.length
+  //   );
+  // };
 
 
   /* =======================================================
@@ -1342,7 +1247,7 @@ export default function PatientHelpDesk() {
                 max-w-[800px]
                 text-[15px]
                 leading-7
-                text-[#667576]
+                text-[#292a2a]
                 md:text-[16px]
                 md:leading-8
               "
@@ -1571,7 +1476,7 @@ export default function PatientHelpDesk() {
                     mt-3
                     text-[15px]
                     leading-7
-                    text-[#667576]
+                    text-[#272828]
                     md:text-[16px]
                     md:leading-8
                   "
@@ -1730,7 +1635,7 @@ export default function PatientHelpDesk() {
                 }
               `}
             >
-              {visibleStoryItems.map(
+              {/* {visibleStoryItems.map(
                 (story, index) => (
                   <PatientStoryCard
                     key={`${story.id}-${index}`}
@@ -1740,7 +1645,28 @@ export default function PatientHelpDesk() {
                     }
                   />
                 )
-              )}
+              )} */}
+              {storiesLoading ? (
+  <div className="col-span-full py-14 text-center text-[#526566]">
+    Loading patient stories...
+  </div>
+) : storiesError ? (
+  <div className="col-span-full py-14 text-center text-red-600">
+    {storiesError}
+  </div>
+) : visibleStoryItems.length === 0 ? (
+  <div className="col-span-full py-14 text-center text-[#526566]">
+    No patient stories available.
+  </div>
+) : (
+  visibleStoryItems.map((story, index) => (
+    <PatientStoryCard
+      key={`${story.id}-${index}`}
+      story={story}
+      onPlay={setSelectedStory}
+    />
+  ))
+)}
             </div>
 
 
@@ -1788,8 +1714,11 @@ export default function PatientHelpDesk() {
               gap-2
             "
           >
-            {patientStories.map(
-              (_, index) => (
+            {/* {patientStories.map(
+              (_, index) => ( */}
+              {!storiesLoading &&
+                !storiesError &&
+                patientStories.map((_, index) => (
                 <button
                   key={index}
                   type="button"
@@ -1895,7 +1824,19 @@ export default function PatientHelpDesk() {
               empty height in the beside FAQ.
           ================================================= */}
 
-          <div
+{faqsLoading && (
+  <p className="mt-10 text-center text-[#526566]">
+    Loading FAQs...
+  </p>
+)}
+
+{faqsError && (
+  <p className="mt-10 text-center text-red-600">
+    {faqsError}
+  </p>
+)}
+
+          {/* <div
             className="
               mt-11
               grid
@@ -1904,7 +1845,18 @@ export default function PatientHelpDesk() {
               lg:grid-cols-2
               lg:gap-8
             "
-          >
+          > */}
+          {!faqsLoading && !faqsError && generalFaqs.length > 0 && (
+  <div
+    className="
+      mt-11
+      grid
+      items-start
+      gap-4
+      lg:grid-cols-2
+      lg:gap-8
+    "
+  >
             {/* LEFT COLUMN */}
 
             <div className="space-y-3">
@@ -1968,6 +1920,7 @@ export default function PatientHelpDesk() {
               )}
             </div>
           </div>
+          )}
         </div>
       </section>
 

@@ -18,7 +18,6 @@ import AuthDrawer from "./components/auth/AuthDrawer";
 
 import Home from "./pages/Home";
 import Specialities from "./pages/Specialities";
-import DynamicPage from "./pages/DynamicPage";
 import Profile from "./pages/Profile";
 
 import BecomePartnerPage from "./pages/BecomePartner";
@@ -30,8 +29,7 @@ import PatientHelpDesk from "./pages/PatientHelpDesk";
 
 import SpecialityDetails from "./pages/SpecialityDetails";
 import SubSpecialityDetails from "./pages/SubSpecialityDetails";
-import SpecialityTreatments from "./pages/SpecialityTreatments";
-import SpecialityAilments from "./pages/SpecialityAilments";
+
 
 
 
@@ -52,6 +50,13 @@ import Videos from "./pages/Videos";
 import CaseStudies from "./pages/CaseStudies";
 import BlogDetails from "./pages/BlogDetails";
 import CaseStudyDetails from "./pages/CaseStudyDetails";
+
+import Doctors from "./pages/Doctors";
+
+import Services from "./pages/Services";
+import ServiceDetails from "./pages/ServiceDetails";
+
+import PatientProfileDemo from "./pages/PatientProfileDemo";
 
 export default function App() {
   const location = useLocation();
@@ -237,18 +242,23 @@ export default function App() {
           }
         />
 
+        <Route
+  path="/patient-profile-demo"
+  element={<PatientProfileDemo />}
+/>
+
         {/* DOCTORS */}
 
         <Route
-          path="/doctors"
-          element={
-            <ProtectedRoute>
-              <DynamicPage
-                fixedTitle="Our Doctors"
-              />
-            </ProtectedRoute>
-          }
-        />
+  path="/doctors"
+  element={
+    <ProtectedRoute>
+      <Doctors />
+    </ProtectedRoute>
+  }
+/>
+
+
 
         {/* SPECIALITIES */}
 
@@ -257,10 +267,7 @@ export default function App() {
           element={<Specialities />}
         />
 
-        {/* <Route
-          path="/speciality/:slug"
-          element={<DynamicPage />}
-        /> */}
+   
        <Route
   path="/speciality/:slug"
   element={<SpecialityDetails />}
@@ -273,12 +280,14 @@ export default function App() {
 
 <Route
   path="/speciality/:slug/treatments"
-  element={<SpecialityTreatments />}
+  element={<AllTreatments />}
 />
 
 <Route
   path="/speciality/:slug/ailments"
-  element={<SpecialityAilments />}
+  element={
+    <AllAilments />
+  }
 />
 
 <Route
@@ -366,20 +375,16 @@ export default function App() {
 />
 
         {/* SERVICES */}
+<Route
+  path="/services"
+  element={<Services />}
+/>
 
-        <Route
-          path="/services"
-          element={
-            <DynamicPage
-              fixedTitle="Services"
-            />
-          }
-        />
+<Route
+  path="/services/:slug"
+  element={<ServiceDetails />}
+/>
 
-        <Route
-          path="/services/:slug"
-          element={<DynamicPage />}
-        />
 
      <Route
   path="/international-patients"
@@ -403,39 +408,14 @@ export default function App() {
   element={<PlanYourTrip />}
 />
 
-      <Route
-        path="/international/:slug"
-        element={<DynamicPage />}
-      />
-
-        <Route
-          path="/international/:slug"
-          element={<DynamicPage />}
-        />
 
         {/* CONTACT */}
 
-        <Route
-          path="/contact"
-          element={
-            <DynamicPage
-              fixedTitle="Contact Us"
-            />
-          }
-        />
-
-<Route
-  path="/become-a-partner"
-  element={<BecomePartnerPage />}
-/>
-        <Route
-          path="*"
-          element={
-            <DynamicPage
-              fixedTitle="Page"
-            />
-          }
-        />
+      <Route
+        path="/become-a-partner"
+        element={<BecomePartnerPage />}
+      />
+        
       </Routes>
 
       <Footer />

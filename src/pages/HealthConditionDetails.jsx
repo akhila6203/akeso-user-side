@@ -180,7 +180,7 @@ export default function HealthConditionDetails() {
                 mt-5
                 text-[15px]
                 leading-8
-                text-[#667576]
+                text-[#2a2a2a]
               "
             >
               {disease.about}
@@ -199,9 +199,9 @@ export default function HealthConditionDetails() {
             >
               <p
                 className="
-                  text-[13px]
+                  text-[15px]
                   leading-6
-                  text-[#667576]
+                  text-[#323232]
                 "
               >
                 This information is for
@@ -408,9 +408,9 @@ export default function HealthConditionDetails() {
               <p
                 className="
                   mt-5
-                  text-[15px]
+                  text-[16px]
                   leading-8
-                  text-[#667576]
+                  text-[#2a2a2a]
                 "
               >
                 {
@@ -437,9 +437,9 @@ export default function HealthConditionDetails() {
                         className="
                           flex
                           gap-3
-                          text-[14px]
+                          text-[15px]
                           leading-7
-                          text-[#667576]
+                          text-[#262727]
                         "
                       >
                         <span
@@ -520,7 +520,7 @@ function ConditionBoxImage({
             justify-center
             px-5
             text-center
-            text-[#667576]
+            text-[#2c2d2d]
             sm:h-[360px]
             lg:h-[400px]
           "

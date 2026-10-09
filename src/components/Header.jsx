@@ -1063,6 +1063,41 @@ const desktopDropdownClass = (open, active) => `
     Login
   </button>
 )}
+
+{/* ===============================================
+    TEMP PATIENT PROFILE UI TEST
+=============================================== */}
+
+<button
+  type="button"
+  onClick={() =>
+    navigate("/patient-profile-demo")
+  }
+  className="
+    hidden
+    sm:flex
+    h-[40px]
+    items-center
+    gap-2
+    rounded-full
+    border
+    border-[#C8942E]/40
+    bg-[#fffaf1]
+    px-4
+    text-[13px]
+    font-semibold
+    text-[#064B50]
+    transition-all
+    duration-200
+    hover:bg-[#064B50]
+    hover:border-[#064B50]
+    hover:text-white
+  "
+>
+  <UserRound size={16} />
+
+  Patient Demo
+</button>
               {/* ===============================================
                   MOBILE MENU BUTTON
               =============================================== */}

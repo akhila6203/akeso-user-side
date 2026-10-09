@@ -228,7 +228,7 @@ export default function TechnologySlider({
                       {technology.name}
                     </h3>
 
-                    <p className="mt-3 text-[15px] leading-7 text-[#667576]">
+                    <p className="mt-3 text-[16px] leading-7 text-[#2c2d2d]">
                       {
                         technology.description
                       }

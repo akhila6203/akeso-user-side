@@ -167,10 +167,10 @@ function PointList({
 
             <p
               className="
-                text-[13px]
+                text-[15px]
                 leading-6
-                text-[#667576]
-                sm:text-[14px]
+                text-[#070707]
+                sm:text-[16px]
                 sm:leading-7
               "
             >
@@ -265,9 +265,9 @@ export default function TreatmentDetails() {
               mx-auto
               mt-4
               max-w-[600px]
-              text-[14px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-[#0a0a0a]
             "
           >
             The requested treatment
@@ -597,11 +597,11 @@ export default function TreatmentDetails() {
         <p
           className="
             mt-5
-            text-[14px]
+            text-[16px]
             leading-7
-            text-[#536466]
+            text-[#151515]
 
-            sm:text-[15px]
+            sm:text-[17px]
             sm:leading-8
           "
         >
@@ -647,11 +647,11 @@ export default function TreatmentDetails() {
 
           <p
             className="
-              text-[12px]
+              text-[125x]
               leading-6
-              text-[#667576]
+              text-[#090909]
 
-              sm:text-[13px]
+              sm:text-[16px]
               sm:leading-6
             "
           >
@@ -731,7 +731,7 @@ export default function TreatmentDetails() {
                 max-w-[680px]
                 text-[14px]
                 leading-7
-                text-[#667576]
+                text-[#383838]
                 sm:text-[15px]
               "
             >
@@ -820,10 +820,10 @@ export default function TreatmentDetails() {
               <p
                 className="
                   mt-5
-                  text-[14px]
+                  text-[16px]
                   leading-7
-                  text-[#536466]
-                  sm:text-[15px]
+                  text-[#0f1010]
+                  sm:text-[17px]
                   sm:leading-8
                 "
               >
@@ -851,9 +851,9 @@ export default function TreatmentDetails() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[15px]
                     leading-6
-                    text-[#667576]
+                    text-[#2c2d2d]
                   "
                 >
                   The exact treatment
@@ -957,7 +957,7 @@ export default function TreatmentDetails() {
                 max-w-[700px]
                 text-[14px]
                 leading-7
-                text-[#667576]
+                text-[#393a3a]
                 sm:text-[15px]
               "
             >
@@ -1082,10 +1082,10 @@ export default function TreatmentDetails() {
               <p
                 className="
                   mt-5
-                  text-[14px]
+                  text-[15px]
                   leading-7
-                  text-[#536466]
-                  sm:text-[15px]
+                  text-[#1a1a1a]
+                  sm:text-[17px]
                   sm:leading-8
                 "
               >
@@ -1112,9 +1112,9 @@ export default function TreatmentDetails() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[15px]
                     leading-6
-                    text-[#667576]
+                    text-[#252525]
                   "
                 >
                   Benefits, risks and

@@ -433,9 +433,9 @@ export default function InternationalDoctors({
             className="
               mt-4
 
-              text-[14px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-[#404041]
 
               md:text-[15px]
             "
@@ -845,9 +845,9 @@ function DoctorCard({
             className="
               mt-1
 
-              text-[12px]
+              text-[15px]
               leading-5
-              text-[#667576]
+              text-[#323434]
             "
           >
             {doctor.designation}
@@ -1035,9 +1035,9 @@ function DoctorInfo({
                 items-start
                 gap-2
 
-                text-[12px]
+                text-[15px]
                 leading-5
-                text-[#667576]
+                text-[#424343]
               "
             >
               <BadgeCheck

@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 
+import useOurStories from "../../hooks/useOurStories";
+
 /* =====================================================
    DUMMY PATIENT STORIES
 
@@ -17,84 +19,89 @@ import {
    Later approved patient videos tho replace cheyyandi.
 ===================================================== */
 
-const stories = [
-  {
-    id: 1,
+// const stories = [
+//   {
+//     id: 1,
 
-    title:
-      "International Patient Treatment Journey",
+//     title:
+//       "International Patient Treatment Journey",
 
-    description:
-      "A patient shares their experience of consultation, treatment and coordinated healthcare support.",
+//     description:
+//       "A patient shares their experience of consultation, treatment and coordinated healthcare support.",
 
-    image:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=900&q=80",
 
-    youtubeId: "ysz5S6PUM-U",
-  },
+//     youtubeId: "ysz5S6PUM-U",
+//   },
 
-  {
-    id: 2,
+//   {
+//     id: 2,
 
-    title:
-      "Recovery & Post-Treatment Experience",
+//     title:
+//       "Recovery & Post-Treatment Experience",
 
-    description:
-      "A healthcare journey covering treatment planning, recovery and post-treatment support.",
+//     description:
+//       "A healthcare journey covering treatment planning, recovery and post-treatment support.",
 
-    image:
-      "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=900&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=900&q=80",
 
-    youtubeId: "ysz5S6PUM-U",
-  },
+//     youtubeId: "ysz5S6PUM-U",
+//   },
 
-  {
-    id: 3,
+//   {
+//     id: 3,
 
-    title:
-      "Healthcare Journey in India",
+//     title:
+//       "Healthcare Journey in India",
 
-    description:
-      "An international healthcare experience from initial consultation through treatment and recovery.",
+//     description:
+//       "An international healthcare experience from initial consultation through treatment and recovery.",
 
-    image:
-      "https://images.unsplash.com/photo-1516841273335-e39b37888115?auto=format&fit=crop&w=900&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1516841273335-e39b37888115?auto=format&fit=crop&w=900&q=80",
 
-    youtubeId: "ysz5S6PUM-U",
-  },
+//     youtubeId: "ysz5S6PUM-U",
+//   },
 
-  {
-    id: 4,
+//   {
+//     id: 4,
 
-    title:
-      "Surgery & Recovery Experience",
+//     title:
+//       "Surgery & Recovery Experience",
 
-    description:
-      "A patient journey through specialist consultation, planned treatment and coordinated recovery.",
+//     description:
+//       "A patient journey through specialist consultation, planned treatment and coordinated recovery.",
 
-    image:
-      "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=900&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=900&q=80",
 
-    youtubeId: "ysz5S6PUM-U",
-  },
+//     youtubeId: "ysz5S6PUM-U",
+//   },
 
-  {
-    id: 5,
+//   {
+//     id: 5,
 
-    title:
-      "International Care Experience",
+//     title:
+//       "International Care Experience",
 
-    description:
-      "A patient shares their experience of receiving coordinated healthcare assistance during their visit to India.",
+//     description:
+//       "A patient shares their experience of receiving coordinated healthcare assistance during their visit to India.",
 
-    image:
-      "https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=900&q=80",
+//     image:
+//       "https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=900&q=80",
 
-    youtubeId: "ysz5S6PUM-U",
-  },
-];
+//     youtubeId: "ysz5S6PUM-U",
+//   },
+// ];
 
 export default function PatientStories() {
+    const {
+    stories = [],
+    loading,
+    error,
+  } = useOurStories();
   const [
     activeStory,
     setActiveStory,
@@ -136,28 +143,48 @@ export default function PatientStories() {
     };
   }, []);
 
+  // useEffect(() => {
+  //   setCurrentIndex(0);
+  // }, [visibleCount]);
   useEffect(() => {
     setCurrentIndex(0);
-  }, [visibleCount]);
+  }, [visibleCount, stories.length]);
 
   /* =====================================================
      SLIDER
   ===================================================== */
+const shouldSlide = stories.length > visibleCount;
 
-  const nextSlide = () => {
-    setCurrentIndex(
-      (prev) =>
-        (prev + 1) % stories.length
-    );
-  };
+const nextSlide = () => {
+  if (!shouldSlide) return;
 
-  const prevSlide = () => {
-    setCurrentIndex(
-      (prev) =>
-        (prev - 1 + stories.length) %
-        stories.length
-    );
-  };
+  setCurrentIndex(
+    (prev) => (prev + 1) % stories.length
+  );
+};
+
+const prevSlide = () => {
+  if (!shouldSlide) return;
+
+  setCurrentIndex(
+    (prev) =>
+      (prev - 1 + stories.length) % stories.length
+  );
+};
+  // const nextSlide = () => {
+  //   setCurrentIndex(
+  //     (prev) =>
+  //       (prev + 1) % stories.length
+  //   );
+  // };
+
+  // const prevSlide = () => {
+  //   setCurrentIndex(
+  //     (prev) =>
+  //       (prev - 1 + stories.length) %
+  //       stories.length
+  //   );
+  // };
 
   /* AUTO PLAY */
 
@@ -177,10 +204,11 @@ export default function PatientStories() {
     }, 4000);
 
     return () => clearInterval(timer);
-  }, [
-    activeStory,
-    visibleCount,
-  ]);
+  // }, [
+  //   activeStory,
+  //   visibleCount,
+  // ]);
+  }, [activeStory, visibleCount, stories.length]);
 
   /* =====================================================
      INFINITE VISIBLE ITEMS
@@ -194,20 +222,29 @@ export default function PatientStories() {
      1 2 3...
   ===================================================== */
 
-  const visibleStories =
-    Array.from(
+  // const visibleStories =
+  //   Array.from(
+  //     {
+  //       length: Math.min(
+  //         visibleCount,
+  //         stories.length
+  //       ),
+  //     },
+  //     (_, index) =>
+  //       stories[
+  //         (currentIndex + index) %
+  //           stories.length
+  //       ]
+  //   );
+  const visibleStories = stories.length
+  ? Array.from(
       {
-        length: Math.min(
-          visibleCount,
-          stories.length
-        ),
+        length: Math.min(visibleCount, stories.length),
       },
       (_, index) =>
-        stories[
-          (currentIndex + index) %
-            stories.length
-        ]
-    );
+        stories[(currentIndex + index) % stories.length]
+    )
+  : [];
 
   /* =====================================================
      VIDEO POPUP
@@ -303,9 +340,9 @@ export default function PatientStories() {
                 mt-4
                 max-w-[680px]
 
-                text-[14px]
+                text-[15px]
                 leading-7
-                text-[#667576]
+                text-[#363737]
 
                 md:text-[15px]
               "
@@ -376,7 +413,7 @@ export default function PatientStories() {
                 xl:grid-cols-3
               "
             >
-              {visibleStories.map(
+              {/* {visibleStories.map(
                 (story, position) => (
                   <StoryCard
                     key={`${story.id}-${position}`}
@@ -386,7 +423,28 @@ export default function PatientStories() {
                     }
                   />
                 )
-              )}
+              )} */}
+              {loading ? (
+  <p className="col-span-full py-12 text-center text-[#064B50]">
+    Loading patient stories...
+  </p>
+) : error ? (
+  <p className="col-span-full py-12 text-center text-red-600">
+    {String(error?.message || error)}
+  </p>
+) : visibleStories.length === 0 ? (
+  <p className="col-span-full py-12 text-center text-[#064B50]">
+    No patient stories available.
+  </p>
+) : (
+  visibleStories.map((story, position) => (
+    <StoryCard
+      key={`${story.id}-${position}`}
+      story={story}
+      onClick={() => setActiveStory(story)}
+    />
+  ))
+)}
             </div>
 
             {/* RIGHT */}
@@ -535,7 +593,8 @@ function StoryCard({
         "
       >
         <img
-          src={story.image}
+          // src={story.image}
+          src={story.image || story.thumbnail}
           alt={story.title}
           className="
             h-full
@@ -629,13 +688,17 @@ function StoryCard({
             text-[#064B50]
           "
         >
-          Patient Experience
+          {/* Patient Experience */}
+          {story.category || "Patient Experience"}
         </span>
       </div>
 
       {/* CONTENT */}
 
       <div className="p-5">
+        <p className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[#C8942E]">
+          {story.category || "Our Stories"}
+        </p>
         <h3
           className="
             text-[17px]
@@ -651,12 +714,13 @@ function StoryCard({
           className="
             mt-2
 
-            text-[13px]
+            text-[15px]
             leading-6
-            text-[#667576]
+            text-[#2f3030]
           "
         >
-          {story.description}
+          {/* {story.description} */}
+          {story.description || story.text || ""}
         </p>
 
         <div
@@ -669,7 +733,7 @@ function StoryCard({
 
             text-[12px]
             font-semibold
-            text-[#C8942E]
+            text-[#39b8b0]
           "
         >
           <Play
@@ -768,7 +832,10 @@ function VideoPopup({
 
         <div className="aspect-video">
           <iframe
-            src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
+            // src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
+            src={`https://www.youtube.com/embed/${
+  story.youtubeId || story.videoId
+}?autoplay=1&rel=0`}
             title={story.title}
             className="h-full w-full"
             allow="

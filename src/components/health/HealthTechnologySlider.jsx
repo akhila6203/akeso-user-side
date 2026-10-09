@@ -179,10 +179,10 @@ export default function HealthTechnologySlider({
               mx-auto
               mt-4
               max-w-[700px]
-              text-[14px]
+              text-[15px]
               leading-7
-              text-[#667576]
-              sm:text-[15px]
+              text-[#525252]
+              sm:text-[16px]
             "
           >
             Explore selected medical
@@ -344,9 +344,9 @@ export default function HealthTechnologySlider({
                       className="
                         mt-3
                         line-clamp-4
-                        text-[14px]
+                        text-[16px]
                         leading-7
-                        text-[#667576]
+                        text-[#3d3d3d]
                       "
                     >
                       {

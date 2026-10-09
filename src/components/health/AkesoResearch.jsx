@@ -127,9 +127,9 @@ export default function AkesoResearch() {
             <p
               className="
                 mt-5
-                text-[15px]
+                text-[16px]
                 leading-8
-                text-[#667576]
+                text-black
               "
             >
               Explore healthcare

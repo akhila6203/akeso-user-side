@@ -29,7 +29,8 @@ import {
 } from "react";
 
 import { Link } from "react-router-dom";
-
+import useOurStories from "../hooks/useOurStories";
+import useFaqs from "../hooks/useFaqs";
 
 /* =========================================================
    TRIP PLANNING
@@ -158,107 +159,6 @@ const documents = [
       "Arrival details when airport pickup or local coordination is required.",
       "Accommodation details if arrangements have already been made.",
     ],
-  },
-];
-
-
-/* =========================================================
-   FAQ
-========================================================= */
-
-const faqs = [
-  {
-    question:
-      "What medical documents should I send before travelling?",
-    answer:
-      "Share recent medical reports, diagnosis documents, scans, investigation results, previous treatment information and your current medication details. This helps the medical team understand your case before your visit.",
-  },
-  {
-    question:
-      "Does Akeso arrange flight tickets?",
-    answer:
-      "Flights are not included in the treatment estimate. Akeso can assist with travel coordination and help you plan your arrival after your treatment schedule is confirmed.",
-  },
-  {
-    question:
-      "Can you assist with a medical visa?",
-    answer:
-      "Akeso can support the coordination of medical documentation required for your treatment journey. Visa requirements and approval remain subject to the applicable authorities and your country of travel.",
-  },
-  {
-    question:
-      "Can you arrange airport pickup?",
-    answer:
-      "Airport pickup and local transportation coordination can be arranged according to your confirmed arrival details and treatment plan.",
-  },
-  {
-    question:
-      "Can my family member travel with me?",
-    answer:
-      "Patients may travel with an accompanying family member subject to applicable travel and visa requirements. Our team can also assist with stay planning for accompanying attendants.",
-  },
-  {
-    question:
-      "How is my hospital selected?",
-    answer:
-      "Hospital and specialist coordination is based on your medical condition, treatment requirements, available clinical expertise and the information provided in your medical reports.",
-  },
-  {
-    question:
-      "What happens after my treatment?",
-    answer:
-      "Your journey may include discharge coordination, recovery guidance and follow-up planning based on the recommendations of your treating medical team.",
-  },
-  {
-    question:
-      "When should I book my travel?",
-    answer:
-      "It is generally better to finalise travel after the treatment plan, hospital schedule and relevant documentation have been coordinated.",
-  },
-];
-
-
-/* =========================================================
-   PATIENT STORIES
-   Replace with approved Akeso patient videos later.
-========================================================= */
-
-const patientStories = [
-  {
-    id: 1,
-    youtubeId: "YOUR_VIDEO_ID_1",
-    image:
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80",
-    title: "Healthcare Journey in India",
-    text:
-      "An international patient journey from initial medical review through treatment and recovery.",
-  },
-  {
-    id: 2,
-    youtubeId: "YOUR_VIDEO_ID_2",
-    image:
-      "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=1000&q=80",
-    title: "Treatment & Recovery Experience",
-    text:
-      "A healthcare journey involving specialist consultation, planned treatment and coordinated recovery.",
-  },
-  {
-    id: 3,
-    youtubeId: "YOUR_VIDEO_ID_3",
-    image:
-      "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1000&q=80",
-    title: "International Patient Experience",
-    text:
-      "An international patient's experience receiving coordinated support during treatment in India.",
-  },
-  {
-    id: 4,
-    youtubeId: "YOUR_VIDEO_ID_4",
-    image:
-      "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1000&q=80",
-    title: "Recovery & Follow-Up Journey",
-    text:
-      "A patient experience covering treatment support, recovery planning and medical follow-up.",
   },
 ];
 
@@ -537,7 +437,7 @@ function TripPlanning() {
                   <p
                     className="
                       mt-3
-                      text-[14px]
+                      text-[15px]
                       leading-6
                       text-[#263F41]
                     "
@@ -735,7 +635,7 @@ function PatientServices() {
                     <p
                       className="
                         mt-3
-                        text-[14px]
+                        text-[15px]
                         leading-6
                         text-[#263F41]
                       "
@@ -866,7 +766,7 @@ function RequiredDocuments() {
 
                             <p
                               className="
-                                text-[14px]
+                                text-[15px]
                                 leading-6
                                 text-[#263F41]
                               "
@@ -908,7 +808,7 @@ function RequiredDocuments() {
 
           <p
             className="
-              text-[14px]
+              text-[15px]
               leading-6
               text-[#263F41]
             "
@@ -929,10 +829,57 @@ function RequiredDocuments() {
 /* =========================================================
    FAQ
 ========================================================= */
+function TripFaqItem({ faq, open, onClick }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-[#DCE8E7] bg-[#F7FAF9]">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+      >
+        <span className="text-[14px] font-semibold leading-6 text-[#064B50] md:text-[15px]">
+          {faq.question}
+        </span>
 
+        <ChevronDown
+          size={18}
+          className={`shrink-0 text-[#C8942E] transition-transform duration-300 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div className="border-t border-[#DCE8E7] px-5 py-4">
+          <p className="text-[15px] leading-6 text-[#263F41]">
+            {faq.answer}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+// function FaqSection() {
+//   const [openIndex, setOpenIndex] =
+//     useState(0);
 function FaqSection() {
-  const [openIndex, setOpenIndex] =
-    useState(0);
+  const {
+    faqs,
+    loading,
+    error,
+  } = useFaqs();
+
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const leftFaqs = faqs.filter(
+    (_, index) => index % 2 === 0
+  );
+
+  const rightFaqs = faqs.filter(
+    (_, index) => index % 2 !== 0
+  );
+
 
   return (
     <section className="bg-white py-16 md:py-20">
@@ -951,7 +898,64 @@ function FaqSection() {
           text="Answers to common questions international patients may have while preparing for their medical journey."
         />
 
-        <div
+        {loading && (
+  <p className="mt-10 text-center text-[#263F41]">
+    Loading FAQs...
+  </p>
+)}
+
+{error && (
+  <p className="mt-10 text-center text-red-600">
+    {error}
+  </p>
+)}
+
+{!loading && !error && faqs.length === 0 && (
+  <p className="mt-10 text-center text-[#263F41]">
+    No published FAQs available.
+  </p>
+)}
+
+<div className="mt-10 grid grid-cols-1 items-start gap-3 lg:grid-cols-2 lg:gap-8">
+
+  <div className="space-y-3">
+    {leftFaqs.map((faq) => {
+      const index = faqs.indexOf(faq);
+      const open = openIndex === index;
+
+      return (
+        <TripFaqItem
+          key={faq.id}
+          faq={faq}
+          open={open}
+          onClick={() =>
+            setOpenIndex(open ? null : index)
+          }
+        />
+      );
+    })}
+  </div>
+
+  <div className="space-y-3">
+    {rightFaqs.map((faq) => {
+      const index = faqs.indexOf(faq);
+      const open = openIndex === index;
+
+      return (
+        <TripFaqItem
+          key={faq.id}
+          faq={faq}
+          open={open}
+          onClick={() =>
+            setOpenIndex(open ? null : index)
+          }
+        />
+      );
+    })}
+  </div>
+
+</div>
+        {/* <div
           className="
             mt-10
             grid
@@ -1033,7 +1037,7 @@ function FaqSection() {
                   >
                     <p
                       className="
-                        text-[14px]
+                        text-[15px]
                         leading-6
                         text-[#263F41]
                       "
@@ -1045,7 +1049,7 @@ function FaqSection() {
               </div>
             );
           })}
-        </div>
+        </div> */}
       </div>
     </section>
   );
@@ -1057,15 +1061,17 @@ function FaqSection() {
 ========================================================= */
 
 function PatientStories() {
-  const [visibleCount, setVisibleCount] =
-    useState(3);
+  const {
+    stories: patientStories = [],
+    loading: storiesLoading,
+    error: storiesError,
+  } = useOurStories();
 
-  const [currentIndex, setCurrentIndex] =
-    useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedStory, setSelectedStory] = useState(null);
 
-  const [selectedStory, setSelectedStory] =
-    useState(null);
-
+  // Responsive cards count
   useEffect(() => {
     const update = () => {
       if (window.innerWidth < 768) {
@@ -1078,43 +1084,49 @@ function PatientStories() {
     };
 
     update();
-
     window.addEventListener("resize", update);
 
-    return () =>
-      window.removeEventListener(
-        "resize",
-        update
-      );
+    return () => window.removeEventListener("resize", update);
   }, []);
 
-  const next = () =>
-    setCurrentIndex(
-      (current) =>
-        (current + 1) %
-        patientStories.length
-    );
+  const shouldSlide = patientStories.length > visibleCount;
 
-  const previous = () =>
-    setCurrentIndex(
-      (current) =>
-        (current -
-          1 +
-          patientStories.length) %
-        patientStories.length
-    );
+  const next = () => {
+    if (!shouldSlide) return;
 
+    setCurrentIndex((current) =>
+      (current + 1) % patientStories.length
+    );
+  };
+
+  const previous = () => {
+    if (!shouldSlide) return;
+
+    setCurrentIndex((current) =>
+      (current - 1 + patientStories.length) %
+      patientStories.length
+    );
+  };
+
+  // Reset slider when API count changes
   useEffect(() => {
-    if (selectedStory) return;
+    setCurrentIndex(0);
+  }, [patientStories.length]);
 
-    const timer = setInterval(
-      next,
-      4500
-    );
+  // Automatic sliding
+  useEffect(() => {
+    if (!shouldSlide || selectedStory) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((current) =>
+        (current + 1) % patientStories.length
+      );
+    }, 4500);
 
     return () => clearInterval(timer);
-  }, [selectedStory]);
+  }, [shouldSlide, selectedStory, patientStories.length]);
 
+  // Escape key and background scroll
   useEffect(() => {
     if (!selectedStory) return;
 
@@ -1124,47 +1136,36 @@ function PatientStories() {
       }
     };
 
-    document.addEventListener(
-      "keydown",
-      closeOnEscape
-    );
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-    document.body.style.overflow =
-      "hidden";
+    document.addEventListener("keydown", closeOnEscape);
 
     return () => {
-      document.removeEventListener(
-        "keydown",
-        closeOnEscape
-      );
-
-      document.body.style.overflow =
-        "";
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.style.overflow = previousOverflow;
     };
   }, [selectedStory]);
 
-  const visibleStories =
-    Array.from(
-      { length: visibleCount },
-      (_, index) =>
-        patientStories[
-          (currentIndex + index) %
+  const visibleStories = patientStories.length
+    ? Array.from(
+        {
+          length: Math.min(
+            visibleCount,
             patientStories.length
-        ]
-    );
+          ),
+        },
+        (_, index) =>
+          patientStories[
+            (currentIndex + index) % patientStories.length
+          ]
+      )
+    : [];
 
   return (
     <>
       <section className="bg-[#F7FAF9] py-16 md:py-20">
-        <div
-          className="
-            mx-auto
-            max-w-[1450px]
-            px-5
-            sm:px-7
-            lg:px-10
-          "
-        >
+        <div className="mx-auto max-w-[1450px] px-5 sm:px-7 lg:px-10">
           <SectionHeading
             eyebrow="Real Experiences"
             title="Patient Stories"
@@ -1172,77 +1173,63 @@ function PatientStories() {
           />
 
           <div className="relative mt-11">
-            <SliderButton
-              direction="left"
-              onClick={previous}
-            />
+            {shouldSlide && (
+              <SliderButton
+                direction="left"
+                onClick={previous}
+              />
+            )}
 
             <div
               className={`
-                grid
-                grid-cols-1
-                gap-6
-                ${
-                  visibleCount >= 2
-                    ? "md:grid-cols-2"
-                    : ""
-                }
-                ${
-                  visibleCount >= 3
-                    ? "xl:grid-cols-3"
-                    : ""
-                }
+                grid grid-cols-1 gap-6
+                ${visibleCount >= 2 ? "md:grid-cols-2" : ""}
+                ${visibleCount >= 3 ? "xl:grid-cols-3" : ""}
               `}
             >
-              {visibleStories.map(
-                (story, position) => (
+              {storiesLoading ? (
+                <p className="col-span-full py-12 text-center text-[#263F41]">
+                  Loading patient stories...
+                </p>
+              ) : storiesError ? (
+                <p className="col-span-full py-12 text-center text-red-600">
+                  {storiesError}
+                </p>
+              ) : visibleStories.length === 0 ? (
+                <p className="col-span-full py-12 text-center text-[#263F41]">
+                  No patient stories available.
+                </p>
+              ) : (
+                visibleStories.map((story, position) => (
                   <button
                     key={`${story.id}-${position}`}
                     type="button"
-                    onClick={() =>
-                      setSelectedStory(
-                        story
-                      )
-                    }
+                    onClick={() => setSelectedStory(story)}
                     className="
-                      group
-                      overflow-hidden
-                      rounded-[20px]
-                      border
-                      border-[#DCE8E7]
-                      bg-white
+                      group overflow-hidden rounded-[20px]
+                      border border-[#DCE8E7] bg-white
                       text-left
                       shadow-[0_8px_25px_rgba(6,75,80,0.05)]
-                      transition-all
-                      duration-300
+                      transition-all duration-300
                       hover:-translate-y-1
                       hover:border-[#C8942E]/50
                     "
                   >
-                    <div
-                      className="
-                        relative
-                        h-[240px]
-                        overflow-hidden
-                      "
-                    >
+                    {/* VIDEO THUMBNAIL */}
+                    <div className="relative h-[240px] overflow-hidden">
                       <img
-                        src={story.image}
+                        src={story.image || story.thumbnail}
                         alt={story.title}
                         className="
-                          h-full
-                          w-full
-                          object-cover
-                          transition-transform
-                          duration-500
+                          h-full w-full object-cover
+                          transition-transform duration-500
                           group-hover:scale-105
                         "
                       />
 
                       <div
                         className="
-                          absolute
-                          inset-0
+                          absolute inset-0
                           bg-gradient-to-t
                           from-[#043F43]/80
                           via-[#043F43]/10
@@ -1252,128 +1239,429 @@ function PatientStories() {
 
                       <div
                         className="
-                          absolute
-                          left-1/2
-                          top-1/2
-                          flex
-                          h-14
-                          w-14
-                          -translate-x-1/2
-                          -translate-y-1/2
-                          items-center
-                          justify-center
-                          rounded-full
-                          border
-                          border-white/70
-                          bg-white/20
-                          text-white
+                          absolute left-1/2 top-1/2
+                          flex h-14 w-14
+                          -translate-x-1/2 -translate-y-1/2
+                          items-center justify-center
+                          rounded-full border border-white/70
+                          bg-white/20 text-white
                           backdrop-blur-sm
                         "
                       >
-                        <Play
-                          size={20}
-                          fill="currentColor"
-                        />
+                        <Play size={20} fill="currentColor" />
                       </div>
                     </div>
 
+                    {/* CARD CONTENT */}
                     <div className="p-6">
+                      {/* SPECIALITY */}
+                      <p
+                        className="
+                          mb-3 text-[13px] font-bold
+                          uppercase tracking-[0.08em]
+                          text-[#C8942E]
+                        "
+                      >
+                        {story.category || "Our Stories"}
+                      </p>
+
+                      {/* TITLE */}
                       <h3
                         className="
-                          text-[16px]
-                          font-semibold
-                          leading-6
-                          text-[#064B50]
+                          text-[16px] font-semibold
+                          leading-6 text-[#064B50]
                         "
                       >
                         {story.title}
                       </h3>
 
-                      <p
-                        className="
-                          mt-3
-                          text-[14px]
-                          leading-6
-                          text-[#263F41]
-                        "
-                      >
-                        {story.text}
-                      </p>
+                      {/* DESCRIPTION */}
+                      {(story.description || story.text) && (
+                        <p className="mt-3 text-[15px] leading-6 text-[#263F41]">
+                          {story.description || story.text}
+                        </p>
+                      )}
 
+                      {/* WATCH STORY */}
                       <span
                         className="
-                          mt-4
-                          inline-flex
-                          items-center
-                          gap-2
-                          text-[13px]
-                          font-semibold
-                          text-[#C8942E]
+                          mt-4 inline-flex items-center gap-2
+                          text-[13px] font-semibold
+                          text-[#229885]
                         "
                       >
-                        <Play
-                          size={13}
-                          fill="currentColor"
-                        />
-
+                        <Play size={13} fill="currentColor" />
                         Watch Story
                       </span>
                     </div>
                   </button>
-                )
+                ))
               )}
             </div>
 
-            <SliderButton
-              direction="right"
-              onClick={next}
-            />
-          </div>
-
-          <div
-            className="
-              mt-7
-              flex
-              justify-center
-              gap-2
-            "
-          >
-            {patientStories.map(
-              (story, index) => (
-                <button
-                  key={story.id}
-                  type="button"
-                  onClick={() =>
-                    setCurrentIndex(index)
-                  }
-                  className={`
-                    h-2
-                    rounded-full
-                    transition-all
-                    ${
-                      currentIndex === index
-                        ? "w-8 bg-[#C8942E]"
-                        : "w-2 bg-[#D3E3E2]"
-                    }
-                  `}
-                />
-              )
+            {shouldSlide && (
+              <SliderButton
+                direction="right"
+                onClick={next}
+              />
             )}
           </div>
+
+          {/* PAGINATION DOTS */}
+          {!storiesLoading &&
+            !storiesError &&
+            shouldSlide && (
+              <div className="mt-7 flex justify-center gap-2">
+                {patientStories.map((story, index) => (
+                  <button
+                    key={story.id ?? index}
+                    type="button"
+                    aria-label={`Go to story ${index + 1}`}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`
+                      h-2 rounded-full transition-all
+                      ${
+                        currentIndex === index
+                          ? "w-8 bg-[#C8942E]"
+                          : "w-2 bg-[#D3E3E2]"
+                      }
+                    `}
+                  />
+                ))}
+              </div>
+            )}
         </div>
       </section>
 
+      {/* EXISTING VIDEO POPUP */}
       {selectedStory && (
         <VideoModal
           story={selectedStory}
-          onClose={() =>
-            setSelectedStory(null)
-          }
+          onClose={() => setSelectedStory(null)}
         />
       )}
     </>
   );
 }
+
+// function PatientStories() {
+//   const [visibleCount, setVisibleCount] =
+//     useState(3);
+
+//   const [currentIndex, setCurrentIndex] =
+//     useState(0);
+
+//   const [selectedStory, setSelectedStory] =
+//     useState(null);
+
+//   useEffect(() => {
+//     const update = () => {
+//       if (window.innerWidth < 768) {
+//         setVisibleCount(1);
+//       } else if (window.innerWidth < 1200) {
+//         setVisibleCount(2);
+//       } else {
+//         setVisibleCount(3);
+//       }
+//     };
+
+//     update();
+
+//     window.addEventListener("resize", update);
+
+//     return () =>
+//       window.removeEventListener(
+//         "resize",
+//         update
+//       );
+//   }, []);
+
+//   const next = () =>
+//     setCurrentIndex(
+//       (current) =>
+//         (current + 1) %
+//         patientStories.length
+//     );
+
+//   const previous = () =>
+//     setCurrentIndex(
+//       (current) =>
+//         (current -
+//           1 +
+//           patientStories.length) %
+//         patientStories.length
+//     );
+
+//   useEffect(() => {
+//     if (selectedStory) return;
+
+//     const timer = setInterval(
+//       next,
+//       4500
+//     );
+
+//     return () => clearInterval(timer);
+//   }, [selectedStory]);
+
+//   useEffect(() => {
+//     if (!selectedStory) return;
+
+//     const closeOnEscape = (event) => {
+//       if (event.key === "Escape") {
+//         setSelectedStory(null);
+//       }
+//     };
+
+//     document.addEventListener(
+//       "keydown",
+//       closeOnEscape
+//     );
+
+//     document.body.style.overflow =
+//       "hidden";
+
+//     return () => {
+//       document.removeEventListener(
+//         "keydown",
+//         closeOnEscape
+//       );
+
+//       document.body.style.overflow =
+//         "";
+//     };
+//   }, [selectedStory]);
+
+//   const visibleStories =
+//     Array.from(
+//       { length: visibleCount },
+//       (_, index) =>
+//         patientStories[
+//           (currentIndex + index) %
+//             patientStories.length
+//         ]
+//     );
+
+//   return (
+//     <>
+//       <section className="bg-[#F7FAF9] py-16 md:py-20">
+//         <div
+//           className="
+//             mx-auto
+//             max-w-[1450px]
+//             px-5
+//             sm:px-7
+//             lg:px-10
+//           "
+//         >
+//           <SectionHeading
+//             eyebrow="Real Experiences"
+//             title="Patient Stories"
+//             text="Hear about healthcare journeys involving consultation, treatment and recovery support."
+//           />
+
+//           <div className="relative mt-11">
+//             <SliderButton
+//               direction="left"
+//               onClick={previous}
+//             />
+
+//             <div
+//               className={`
+//                 grid
+//                 grid-cols-1
+//                 gap-6
+//                 ${
+//                   visibleCount >= 2
+//                     ? "md:grid-cols-2"
+//                     : ""
+//                 }
+//                 ${
+//                   visibleCount >= 3
+//                     ? "xl:grid-cols-3"
+//                     : ""
+//                 }
+//               `}
+//             >
+//               {visibleStories.map(
+//                 (story, position) => (
+//                   <button
+//                     key={`${story.id}-${position}`}
+//                     type="button"
+//                     onClick={() =>
+//                       setSelectedStory(
+//                         story
+//                       )
+//                     }
+//                     className="
+//                       group
+//                       overflow-hidden
+//                       rounded-[20px]
+//                       border
+//                       border-[#DCE8E7]
+//                       bg-white
+//                       text-left
+//                       shadow-[0_8px_25px_rgba(6,75,80,0.05)]
+//                       transition-all
+//                       duration-300
+//                       hover:-translate-y-1
+//                       hover:border-[#C8942E]/50
+//                     "
+//                   >
+//                     <div
+//                       className="
+//                         relative
+//                         h-[240px]
+//                         overflow-hidden
+//                       "
+//                     >
+//                       <img
+//                         src={story.image}
+//                         alt={story.title}
+//                         className="
+//                           h-full
+//                           w-full
+//                           object-cover
+//                           transition-transform
+//                           duration-500
+//                           group-hover:scale-105
+//                         "
+//                       />
+
+//                       <div
+//                         className="
+//                           absolute
+//                           inset-0
+//                           bg-gradient-to-t
+//                           from-[#043F43]/80
+//                           via-[#043F43]/10
+//                           to-transparent
+//                         "
+//                       />
+
+//                       <div
+//                         className="
+//                           absolute
+//                           left-1/2
+//                           top-1/2
+//                           flex
+//                           h-14
+//                           w-14
+//                           -translate-x-1/2
+//                           -translate-y-1/2
+//                           items-center
+//                           justify-center
+//                           rounded-full
+//                           border
+//                           border-white/70
+//                           bg-white/20
+//                           text-white
+//                           backdrop-blur-sm
+//                         "
+//                       >
+//                         <Play
+//                           size={20}
+//                           fill="currentColor"
+//                         />
+//                       </div>
+//                     </div>
+
+//                     <div className="p-6">
+//                       <h3
+//                         className="
+//                           text-[16px]
+//                           font-semibold
+//                           leading-6
+//                           text-[#064B50]
+//                         "
+//                       >
+//                         {story.title}
+//                       </h3>
+
+//                       <p
+//                         className="
+//                           mt-3
+//                           text-[15px]
+//                           leading-6
+//                           text-[#263F41]
+//                         "
+//                       >
+//                         {story.text}
+//                       </p>
+
+//                       <span
+//                         className="
+//                           mt-4
+//                           inline-flex
+//                           items-center
+//                           gap-2
+//                           text-[13px]
+//                           font-semibold
+//                           text-[#C8942E]
+//                         "
+//                       >
+//                         <Play
+//                           size={13}
+//                           fill="currentColor"
+//                         />
+
+//                         Watch Story
+//                       </span>
+//                     </div>
+//                   </button>
+//                 )
+//               )}
+//             </div>
+
+//             <SliderButton
+//               direction="right"
+//               onClick={next}
+//             />
+//           </div>
+
+//           <div
+//             className="
+//               mt-7
+//               flex
+//               justify-center
+//               gap-2
+//             "
+//           >
+//             {patientStories.map(
+//               (story, index) => (
+//                 <button
+//                   key={story.id}
+//                   type="button"
+//                   onClick={() =>
+//                     setCurrentIndex(index)
+//                   }
+//                   className={`
+//                     h-2
+//                     rounded-full
+//                     transition-all
+//                     ${
+//                       currentIndex === index
+//                         ? "w-8 bg-[#C8942E]"
+//                         : "w-2 bg-[#D3E3E2]"
+//                     }
+//                   `}
+//                 />
+//               )
+//             )}
+//           </div>
+//         </div>
+//       </section>
+
+//       {selectedStory && (
+//         <VideoModal
+//           story={selectedStory}
+//           onClose={() =>
+//             setSelectedStory(null)
+//           }
+//         />
+//       )}
+//     </>
+//   );
+// }
 
 
 /* =========================================================
@@ -1448,7 +1736,10 @@ function VideoModal({
           "
         >
           <iframe
-            src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
+            // src={`https://www.youtube.com/embed/${story.youtubeId}?autoplay=1&rel=0`}
+            src={`https://www.youtube.com/embed/${
+              story.youtubeId || story.videoId
+            }?autoplay=1&rel=0`}
             title={story.title}
             className="
               absolute

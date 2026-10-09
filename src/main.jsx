@@ -3,8 +3,18 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
+import {
+  SpecialitiesProvider,
+} from "./context/SpecialitiesContext";
+
+
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
+  <SpecialitiesProvider>
     <App />
-  </BrowserRouter>,
+  </SpecialitiesProvider>
+</BrowserRouter>,
+  // <BrowserRouter>
+  //   <App />
+  // </BrowserRouter>,
 );

@@ -24,7 +24,7 @@ export default function TeleVisits() {
           <div className="grid lg:grid-cols-2">
 
             <div className="p-7 sm:p-10 lg:p-12">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#B78124]">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.18em] text-[#B78124]">
                 Virtual Care
               </p>
 
@@ -32,7 +32,7 @@ export default function TeleVisits() {
                 TeleVisits
               </h2>
 
-              <p className="mt-4 max-w-[570px] text-[15px] leading-7 text-[#5e7071]">
+              <p className="mt-4 max-w-[570px] text-[15px] leading-7 text-[#292a2a]">
                 Connect with suitable medical specialists
                 remotely before planning your treatment
                 journey to India.
@@ -123,7 +123,7 @@ export default function TeleVisits() {
                   Care Starts Before You Travel
                 </h3>
 
-                <p className="mx-auto mt-3 max-w-[380px] text-[14px] leading-6 text-white/70">
+                <p className="mx-auto mt-3 max-w-[380px] text-[16px] leading-6 text-white/90">
                   Begin your healthcare journey with
                   convenient remote consultation and
                   coordinated support.
@@ -163,11 +163,11 @@ function TeleItem({
       </div>
 
       <div>
-        <h3 className="text-[15px] font-semibold text-[#064B50]">
+        <h3 className="text-[16px] font-semibold text-[#064B50]">
           {title}
         </h3>
 
-        <p className="mt-1 text-[13px] leading-6 text-[#667576]">
+        <p className="mt-1 text-[15px] leading-6 text-black">
           {text}
         </p>
       </div>

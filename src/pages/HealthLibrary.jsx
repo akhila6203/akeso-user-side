@@ -8,13 +8,14 @@ import HealthTechnologySlider from "../components/health/HealthTechnologySlider"
 
 import KnowledgeCenterSection from "../components/knowledge/KnowledgeCenterSection";
 
+
 import {
   healthConditions,
   libraryProvides,
   healthcareCards,
 } from "../data/healthLibraryData";
 
-import {
+import {  
   healthLibraryTechnologies,
 } from "../data/technologyData";
 

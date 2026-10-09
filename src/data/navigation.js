@@ -243,6 +243,11 @@ export const knowledgeCenter = [
 ========================================================= */
 
 export const services = [
+    [
+    "TeleVisits",
+    "televisits",
+    Video,
+  ],
   [
     "Second Opinion",
     "second-opinion",
@@ -259,11 +264,6 @@ export const services = [
     "Homecare Services",
     "homecare-services",
     House,
-  ],
-  [
-    "TeleVisits",
-    "televisits",
-    Video,
   ],
   [
     "Post-Op Care",

@@ -481,9 +481,9 @@ export default function AilmentDetails() {
               <p
                 className="
                   mt-5
-                  text-[14px]
+                  text-[15px]
                   leading-7
-                  text-[#667576]
+                  text-[#2e2f2f]
 
                   sm:text-[15px]
                   sm:leading-8
@@ -541,9 +541,9 @@ export default function AilmentDetails() {
               >
                 <p
                   className="
-                    text-[12px]
+                    text-[15px]
                     leading-6
-                    text-[#667576]
+                    text-[#262727]
 
                     sm:text-[13px]
                   "
@@ -631,9 +631,9 @@ export default function AilmentDetails() {
                 mx-auto
                 mt-4
                 max-w-[680px]
-                text-[14px]
+                text-[16px]
                 leading-7
-                text-[#667576]
+                text-[#353636]
 
                 sm:text-[15px]
               "
@@ -825,9 +825,9 @@ export default function AilmentDetails() {
                 <p
                   className="
                     mt-5
-                    text-[14px]
+                    text-[16px]
                     leading-7
-                    text-[#667576]
+                    text-[#262727]
 
                     sm:text-[15px]
                     sm:leading-8

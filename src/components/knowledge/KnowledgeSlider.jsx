@@ -11,11 +11,19 @@ import {
 import KnowledgeCard from "./KnowledgeCard";
 import VideoCard from "./VideoCard";
 
+// function getVisibleCount() {
+//   if (typeof window === "undefined") return 3;
+
+//   if (window.innerWidth < 768) return 1;
+//   if (window.innerWidth < 1100) return 2;
+
+//   return 3;
+// }
 function getVisibleCount() {
   if (typeof window === "undefined") return 3;
 
   if (window.innerWidth < 768) return 1;
-  if (window.innerWidth < 1100) return 2;
+  if (window.innerWidth < 1024) return 2;
 
   return 3;
 }
@@ -46,22 +54,34 @@ export default function KnowledgeSlider({
       );
   }, []);
 
+  // useEffect(() => {
+  //   setIndex(0);
+  // }, [type]);
   useEffect(() => {
     setIndex(0);
-  }, [type]);
+  }, [type, visibleCount, items.length]);
 
   if (!items.length) return null;
 
-  const visibleItems = Array.from(
-    {
-      length: Math.min(
-        visibleCount,
-        items.length
-      ),
-    },
-    (_, position) =>
-      items[(index + position) % items.length]
-  );
+  // const visibleItems = Array.from(
+  //   {
+  //     length: Math.min(
+  //       visibleCount,
+  //       items.length
+  //     ),
+  //   },
+  //   (_, position) =>
+  //     items[(index + position) % items.length]
+  // );
+  const shouldSlide = items.length > visibleCount;
+
+const visibleItems = shouldSlide
+  ? Array.from(
+      { length: visibleCount },
+      (_, position) =>
+        items[(index + position) % items.length]
+    )
+  : items;
 
   const previous = () => {
     setIndex(
@@ -80,8 +100,10 @@ export default function KnowledgeSlider({
 
   return (
     <div className="relative">
-      {items.length > 1 && (
-        <>
+      {/* {items.length > 1 && ( */}
+        {/* <> */}
+        {shouldSlide && (
+         <>
           <button
             type="button"
             onClick={previous}
@@ -146,7 +168,7 @@ export default function KnowledgeSlider({
         </>
       )}
 
-      <div
+      {/* <div
         className={`
           grid gap-5 md:gap-6
           ${
@@ -157,7 +179,17 @@ export default function KnowledgeSlider({
               : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
           }
         `}
-      >
+      > */}
+<div
+  className="
+    grid
+    grid-cols-1
+    gap-5
+    md:grid-cols-2
+    md:gap-6
+    lg:grid-cols-3
+  "
+>
         {visibleItems.map((item) =>
           type === "videos" ? (
             <VideoCard

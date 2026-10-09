@@ -9,13 +9,13 @@ const treatments = [
   {
     name: "Knee Replacement",
     usa: "$47,500",
-    india: "$9,999",
+    india: "$40,000+",
     saving: "≈79% less",
   },
   {
     name: "Hip Replacement",
     usa: "$42,500+",
-    india: "$10,499",
+    india: "$45,000+",
     saving: "≈75% less",
   },
 ];
@@ -52,7 +52,7 @@ export default function CostComparison() {
               International Price Tag
             </h2>
 
-            <p className="mt-5 max-w-[550px] text-[15px] leading-7 text-white/75">
+            <p className="mt-5 max-w-[550px] text-[18px] leading-7 text-white">
               Explore indicative treatment cost
               comparisons and request a personalised,
               itemised quote based on your medical
@@ -107,7 +107,7 @@ export default function CostComparison() {
                 </h3>
 
                 <div className="mt-6 border-b border-[#e2e9e8] pb-4">
-                  <p className="text-[12px] uppercase tracking-wider text-[#718182]">
+                  <p className="text-[14px] uppercase tracking-wider text-[#444545]">
                     United States
                   </p>
 
@@ -117,12 +117,13 @@ export default function CostComparison() {
                 </div>
 
                 <div className="pt-4">
-                  <p className="text-[12px] uppercase tracking-wider text-[#718182]">
+                  <p className="text-[14px] uppercase tracking-wider text-[#353637]">
                     Akeso, India
                   </p>
 
                   <p className="mt-1 text-[29px] font-bold text-[#064B50]">
                     {item.india}
+                    {/* {item.saving} */}
                   </p>
 
                   <span
@@ -146,11 +147,12 @@ export default function CostComparison() {
           </div>
         </div>
 
-        <p className="mt-8 text-center text-[11px] leading-5 text-white/55">
+        <p className="mt-8 text-center text-[15px] leading-7 text-white/80">
           Indicative comparison figures from the Akeso
           company portfolio. Final pricing depends on
           medical evaluation, implant selection, hospital
-          and room category. Travel, visa and additional
+          and room category.<br/>
+           Travel, visa and additional
           accommodation costs may apply.
         </p>
       </div>

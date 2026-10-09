@@ -124,9 +124,9 @@ export default function PasswordForm({
           <p
             className="
               mt-2
-              text-[14px]
+              text-[16px]
               leading-6
-              text-[#667576]
+              text-black
             "
           >
             {description}

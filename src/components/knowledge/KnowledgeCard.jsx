@@ -75,9 +75,9 @@ export default function KnowledgeCard({
           <p className="
             mt-3
             line-clamp-2
-            text-[14px]
+            text-[16px]
             leading-6
-            text-[#667576]
+            text-[#4a4b4b]
           ">
             {item.excerpt}
           </p>

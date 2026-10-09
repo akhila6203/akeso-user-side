@@ -318,9 +318,9 @@ export default function TreatmentJourney() {
               mx-auto
               mt-4
               max-w-[720px]
-              text-[14px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-[#222323]
               sm:text-[15px]
             "
           >
@@ -648,9 +648,9 @@ export default function TreatmentJourney() {
                 className="
                   mt-1.5
 
-                  text-[12px]
+                  text-[15px]
                   leading-6
-                  text-[#667576]
+                  text-[#2f3030]
 
                   sm:text-[13px]
                 "
@@ -884,10 +884,10 @@ function JourneyCard({
           className="
             mt-3
 
-            text-[13px]
+            text-[16px]
             leading-6
 
-            text-[#667576]
+            text-[#383a3a]
 
             sm:text-[14px]
           "
@@ -945,9 +945,9 @@ function JourneyCard({
 
           <span
             className="
-              text-[11px]
+              text-[15px]
               font-medium
-              text-[#667576]
+              text-[#212222]
             "
           >
             Coordinated by Akeso

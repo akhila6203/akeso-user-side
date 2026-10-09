@@ -248,9 +248,9 @@ export default function HealthConditionGrid({
               mx-auto
               mt-4
               max-w-[720px]
-              text-[14px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-black
               sm:text-[15px]
             "
           >
@@ -505,7 +505,7 @@ export default function HealthConditionGrid({
                             min-w-9
                             items-center
                             justify-center
-                            text-[#667576]
+                            text-black
                           "
                         >
                           ...
@@ -616,8 +616,8 @@ export default function HealthConditionGrid({
           >
             <p
               className="
-                text-[15px]
-                text-[#667576]
+                text-[16px]
+                text-black
               "
             >
               No diseases or conditions

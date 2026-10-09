@@ -157,7 +157,7 @@ function SectionHeading({
             max-w-[740px]
             text-[14px]
             leading-7
-            text-[#667576]
+            text-[#080808]
 
             sm:text-[15px]
             sm:leading-8
@@ -222,11 +222,11 @@ function PointList({
 
             <p
               className="
-                text-[13px]
+                text-[15px]
                 leading-6
-                text-[#5F7072]
+                text-[#2f2f2f]
 
-                sm:text-[14px]
+                sm:text-[16px]
                 sm:leading-7
               "
             >
@@ -398,11 +398,11 @@ function TechnologyTabs({
           <p
             className="
               mt-4
-              text-[14px]
+              text-[16px]
               leading-7
-              text-[#667576]
+              text-[#040404]
 
-              sm:text-[15px]
+              sm:text-[17px]
               sm:leading-8
             "
           >
@@ -639,11 +639,11 @@ export default function TechnologyDetails() {
               <p
                 className="
                   mt-5
-                  text-[14px]
+                  text-[15px]
                   leading-7
-                  text-[#667576]
+                  text-[#0f0f0f]
 
-                  sm:text-[15px]
+                  sm:text-[16px]
                   sm:leading-8
                 "
               >
@@ -682,11 +682,11 @@ export default function TechnologyDetails() {
 
                   <p
                     className="
-                      text-[12px]
+                      text-[14px]
                       leading-6
-                      text-[#667576]
+                      text-[#1b1c1c]
 
-                      sm:text-[13px]
+                      sm:text-[15px]
                     "
                   >
                     Availability and
@@ -916,7 +916,7 @@ export default function TechnologyDetails() {
           <div>
             <p
               className="
-                text-[11px]
+                text-[12px]
                 font-bold
                 uppercase
                 tracking-[0.2em]
@@ -951,11 +951,11 @@ export default function TechnologyDetails() {
             <p
               className="
                 mt-5
-                text-[14px]
+                text-[15px]
                 leading-7
-                text-[#667576]
+                text-[#1c1c1c]
 
-                sm:text-[15px]
+                sm:text-[16px]
                 sm:leading-8
               "
             >
@@ -1076,9 +1076,9 @@ export default function TechnologyDetails() {
                   <p
                     className="
                       mt-3
-                      text-[13px]
+                      text-[15px]
                       leading-6
-                      text-[#667576]
+                      text-[#272728]
                     "
                   >
                     {

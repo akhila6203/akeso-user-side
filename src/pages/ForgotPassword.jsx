@@ -141,9 +141,9 @@ export default function ForgotPassword({
         <p
           className="
             mt-3
-            text-[14px]
+            text-[15px]
             leading-6
-            text-[#667576]
+            text-[#2c2d2d]
           "
         >
           Enter your registered email

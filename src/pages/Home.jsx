@@ -8,6 +8,7 @@ import TeleVisits from "../components/home/TeleVisits";
 import PostOpWellness from "../components/home/PostOpWellness";
 import FounderWords from "../components/home/FounderWords";
 import BecomePartner from "../components/home/BecomePartner";
+import WhyAkesoIndia from "../components/home/WhyAkesoIndia";
 
 export default function Home({
   onOpenAuth,
@@ -23,7 +24,7 @@ export default function Home({
       <HomeSpecialities />
 
       <WhyAkeso />
-
+<WhyAkesoIndia />
       <CostComparison />
 
       <TeleVisits />

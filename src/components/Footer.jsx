@@ -142,7 +142,7 @@ export default function Footer() {
               className="inline-block"
             >
               <img
-                src="/logo.png"
+                src="/logo1.png"
                 alt="Akeso Global Medical"
                 className="
                   mb-5
@@ -150,8 +150,8 @@ export default function Footer() {
                   w-44
                   object-contain
 
-                  sm:w-48
-                  lg:w-52
+                  sm:w-58
+                  lg:w-62
                 "
               />
             </Link>
@@ -162,11 +162,11 @@ export default function Footer() {
             <p
               className="
                 max-w-[350px]
-                text-[14px]
+                text-[15px]
                 leading-7
-                text-white/80
+                text-white
 
-                sm:text-[15px]
+                sm:text-[16px]
               "
             >
               Healing Beyond Borders. Connecting patients
@@ -265,7 +265,7 @@ export default function Footer() {
                       font-semibold
                       uppercase
                       tracking-[0.08em]
-                      text-white/55
+                      text-white/85
                     "
                   >
                     Mobile
@@ -274,8 +274,8 @@ export default function Footer() {
 
                   <span
                     className="
-                      text-[14px]
-                      text-white/85
+                      text-[16px]
+                      text-white
 
                       transition
                       group-hover:text-white
@@ -337,7 +337,7 @@ export default function Footer() {
                       font-semibold
                       uppercase
                       tracking-[0.08em]
-                      text-white/55
+                      text-white/85
                     "
                   >
                     Email
@@ -347,8 +347,8 @@ export default function Footer() {
                   <span
                     className="
                       break-all
-                      text-[14px]
-                      text-white/85
+                      text-[16px]
+                      text-white
 
                       transition
                       group-hover:text-white
@@ -402,7 +402,7 @@ export default function Footer() {
                       font-semibold
                       uppercase
                       tracking-[0.08em]
-                      text-white/55
+                      text-white/85
                     "
                   >
                     Address
@@ -412,9 +412,9 @@ export default function Footer() {
                   <p
                     className="
                       max-w-[260px]
-                      text-[14px]
+                      text-[16px]
                       leading-6
-                      text-white/85
+                      text-white
                     "
                   >
                     Hyderabad, Telangana, India
@@ -492,10 +492,10 @@ export default function Footer() {
 
               text-center
               text-[12px]
-              text-white/65
+              text-white
 
               sm:px-8
-              sm:text-[13px]
+              sm:text-[15px]
 
               md:flex-row
               md:text-left
@@ -511,7 +511,7 @@ export default function Footer() {
             </p>
 
 
-            <p className="text-white/60">
+            <p className="text-white">
               Healing Beyond Borders
             </p>
 
@@ -769,7 +769,7 @@ function FooterColumn({
               gap-2
 
               text-[14px]
-              text-white/75
+              text-white
 
               transition
               duration-300

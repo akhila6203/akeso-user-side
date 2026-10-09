@@ -252,9 +252,9 @@ function SubAbout({
           <div>
             <p
               className="
-                text-[15px]
+                text-[16px]
                 leading-7
-                text-[#52696A]
+                text-[#2a2b2b]
 
                 sm:text-[16px]
                 sm:leading-8
@@ -266,15 +266,7 @@ function SubAbout({
               {data.about}
             </p>
 
-            <div
-              className="
-                mt-6
-                h-[3px]
-                w-[65px]
-                rounded-full
-                bg-[#C8942E]
-              "
-            />
+          
           </div>
 
           {/* IMAGE */}
@@ -426,12 +418,12 @@ function Highlights({
 
                   <p
                     className="
-                      text-[14px]
+                      text-[15px]
                       font-medium
                       leading-7
                       text-[#263F41]
 
-                      sm:text-[15px]
+                      sm:text-[16px]
                     "
                   >
                     {text}
@@ -541,11 +533,11 @@ function ChildSubSpecialities({
 
                   <span
                     className="
-                      text-[15px]
+                      text-[16px]
                       font-semibold
                       text-[#064B50]
 
-                      sm:text-[16px]
+                      sm:text-[17px]
                     "
                   >
                     {name}
@@ -698,7 +690,7 @@ function ChairmanSection({
                   mt-4
                   text-[15px]
                   leading-7
-                  text-[#52696A]
+                  text-[#343535]
 
                   sm:text-[16px]
                   sm:leading-8
@@ -755,10 +747,10 @@ function ChairmanSection({
                       flex
                       items-center
                       gap-2
-                      text-[13px]
-                      text-[#667576]
+                      text-[15px]
+                      text-[#1e1e1e]
 
-                      sm:text-[14px]
+                      sm:text-[16px]
                     "
                   >
                     <MapPin size={15} />
@@ -911,15 +903,7 @@ function SubTeam({
                     sm:p-6
                   "
                 >
-                  <div
-                    className="
-                      mb-4
-                      h-[3px]
-                      w-[42px]
-                      rounded-full
-                      bg-[#C8942E]
-                    "
-                  />
+                 
 
                   <h3
                     className="
@@ -937,11 +921,11 @@ function SubTeam({
                   <p
                     className="
                       mt-3
-                      text-[14px]
+                      text-[15px]
                       leading-7
-                      text-[#667576]
+                      text-[#262727]
 
-                      sm:text-[15px]
+                      sm:text-[16px]
                     "
                   >
                     {card.description}
@@ -1079,11 +1063,11 @@ function SubCards({
                     <p
                       className="
                         mt-3
-                        text-[14px]
+                        text-[15px]
                         leading-7
-                        text-[#667576]
+                        text-[#333434]
 
-                        sm:text-[15px]
+                        sm:text-[16px]
                       "
                     >
                       {description}

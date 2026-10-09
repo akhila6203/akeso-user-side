@@ -26,8 +26,8 @@ export default function SectionHeading({
         <p
           className={`
             mx-auto mt-4 max-w-[760px]
-            text-[14px] leading-7 md:text-[15px]
-            ${light ? "text-white/80" : "text-[#667576]"}
+            text-[15px] leading-7 md:text-[16px]
+            ${light ? "text-white/80" : "text-[#2b2b2b]"}
           `}
         >
           {description}

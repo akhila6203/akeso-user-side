@@ -30,7 +30,7 @@ export default function BecomePartner() {
               Become an Akeso Partner
             </h2>
 
-            <p className="mt-5 max-w-[650px] text-[15px] leading-7 text-white/75">
+            <p className="mt-5 max-w-[650px] text-[16px] leading-7 text-white/75">
               Join our international healthcare
               network and help connect patients with
               trusted medical care in India.
@@ -68,7 +68,7 @@ export default function BecomePartner() {
                 bg-[#C8942E]
                 px-6
                 py-3
-                text-[14px]
+                text-[15px]
                 font-semibold
                 text-white
                 hover:bg-[#A9781F]
@@ -127,7 +127,7 @@ export default function BecomePartner() {
                 Across Borders
               </p>
 
-              <p className="mt-3 text-[13px] text-white/60">
+              <p className="mt-3 text-[16px] text-white/80">
                 Healing Beyond Borders.
               </p>
             </div>
@@ -152,11 +152,11 @@ function PartnerPoint({
       />
 
       <div>
-        <h3 className="text-[14px] font-semibold text-white">
+        <h3 className="text-[17px] font-semibold text-white">
           {title}
         </h3>
 
-        <p className="mt-1 text-[12px] leading-5 text-white/65">
+        <p className="mt-1 text-[15px] leading-5 text-white/85">
           {text}
         </p>
       </div>

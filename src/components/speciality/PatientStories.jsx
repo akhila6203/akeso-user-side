@@ -10,19 +10,79 @@ import {
   useState,
 } from "react";
 
-import {
-  specialityPatientStories,
-} from "../../data/technologyData";
+// import {
+//   specialityPatientStories,
+// } from "../../data/technologyData";
 
 import SectionHeading from "./SectionHeading";
 
+function getYouTubeEmbedUrl(url) {
+  if (!url) return "";
+
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+
+    let videoId = "";
+
+    if (
+      host === "youtu.be" ||
+      host === "www.youtu.be"
+    ) {
+      videoId = parsed.pathname.split("/")[1];
+    } else if (
+      [
+        "youtube.com",
+        "www.youtube.com",
+        "m.youtube.com",
+        "www.youtube-nocookie.com",
+        "youtube-nocookie.com",
+      ].includes(host)
+    ) {
+      videoId =
+        parsed.searchParams.get("v") ||
+        parsed.pathname.match(
+          /^\/(?:embed|shorts|live)\/([^/]+)/
+        )?.[1] ||
+        "";
+    }
+
+    if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+      return "";
+    }
+
+    return `https://www.youtube.com/embed/${videoId}`;
+  } catch {
+    return "";
+  }
+}
+
+function getVideoThumbnail(url) {
+  const embedUrl = getYouTubeEmbedUrl(url);
+
+  if (!embedUrl) return "";
+
+  const videoId = embedUrl.split("/embed/")[1];
+
+  if (!videoId) return "";
+
+  // return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
+// export default function PatientStories({
+//   stories = specialityPatientStories,
+// }) {
 export default function PatientStories({
-  stories = specialityPatientStories,
+  stories = [],
 }) {
-  const safeStories =
-    stories?.length
-      ? stories
-      : specialityPatientStories;
+  // const safeStories =
+  //   stories?.length
+  //     ? stories
+  //     : specialityPatientStories;
+  const safeStories = Array.isArray(stories)
+  ? stories
+  : [];
 
   const [index, setIndex] =
     useState(0);
@@ -265,11 +325,43 @@ export default function PatientStories({
                   >
 
                     {/* IMAGE */}
-                    <img
+                    {/* <img
                       src={story.image}
                       alt={story.title}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    /> */}
+                    <div className="relative h-full w-full overflow-hidden">
+  {(() => {
+    const videoUrl =
+      story.videoUrl ||
+      story.video ||
+      "";
+
+    const thumbnailUrl =
+      getVideoThumbnail(videoUrl);
+
+    return thumbnailUrl ? (
+      <img
+        src={thumbnailUrl}
+        alt={story.title}
+        loading="lazy"
+        className="
+          absolute
+          inset-0
+          h-full
+          w-full
+          object-cover
+          object-center
+          transition-transform
+          duration-500
+          group-hover:scale-105
+        "
+      />
+    ) : (
+      <div className="absolute inset-0 bg-gradient-to-b from-[#DDEBE9] to-[#064B50]" />
+    );
+  })()}
+</div>
 
                     {/* OVERLAY */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#022F33]/95 via-[#022F33]/25 to-transparent" />
@@ -377,7 +469,71 @@ export default function PatientStories({
             </button>
 
             {/* YOUTUBE */}
-            {activeStory.videoId ? (
+            {/* VIDEO PLAYER */}
+
+{(() => {
+  const videoUrl =
+    activeStory.videoUrl ||
+    activeStory.video ||
+    "";
+
+  const embedUrl =
+    getYouTubeEmbedUrl(videoUrl) ||
+    (activeStory.videoId
+      ? getYouTubeEmbedUrl(
+          `https://www.youtube.com/watch?v=${activeStory.videoId}`
+        )
+      : "");
+
+  const isDirectVideo =
+    /\.(mp4|webm|ogg)(?:[?#]|$)/i.test(videoUrl);
+
+  if (embedUrl) {
+    return (
+      <div className="aspect-video bg-black">
+        <iframe
+          key={embedUrl}
+          src={`${embedUrl}?autoplay=1`}
+          title={activeStory.title || "Patient Story"}
+          className="h-full w-full"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  if (isDirectVideo) {
+    return (
+      <div className="aspect-video bg-black">
+        <video
+          key={videoUrl}
+          src={videoUrl}
+          controls
+          autoPlay
+          playsInline
+          className="h-full w-full object-contain"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-6 py-16 text-center sm:p-14">
+      <h3 className="text-[24px] font-semibold text-[#064B50]">
+        {activeStory.title}
+      </h3>
+
+      <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-7 text-[#252525]">
+        A valid video URL is not available for this
+        patient story. Please add a YouTube link or
+        direct video URL in the admin panel.
+      </p>
+    </div>
+  );
+})()}
+            {/* {activeStory.videoId ? (
               <div className="aspect-video">
 
                 <iframe
@@ -398,7 +554,7 @@ export default function PatientStories({
                   {activeStory.title}
                 </h3>
 
-                <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-7 text-[#667576]">
+                <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-7 text-[#252525]">
                   Add the approved
                   YouTube video ID in
                   technologyData.js to
@@ -407,7 +563,7 @@ export default function PatientStories({
                 </p>
 
               </div>
-            )}
+            )} */}
 
           </div>
 

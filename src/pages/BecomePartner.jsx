@@ -82,7 +82,7 @@ export default function BecomePartnerPage() {
                   {step.title}
                 </h3>
 
-                <p className="mt-3 text-[14px] leading-6 text-[#667576]">
+                <p className="mt-3 text-[15px] leading-6 text-[#303030]">
                   {step.text}
                 </p>
               </div>

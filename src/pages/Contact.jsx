@@ -252,11 +252,11 @@ export default function Contact() {
               className="
                 mt-5
                 max-w-[560px]
-                text-[14px]
+                text-[16px]
                 leading-7
-                text-[#667576]
+                text-[#2d2e2e]
 
-                sm:text-[15px]
+                sm:text-[16px]
               "
             >
               Reach our team for medical
@@ -356,7 +356,7 @@ export default function Contact() {
               <div>
                 <p
                   className="
-                    text-[11px]
+                    text-[16px]
                     font-semibold
                     uppercase
                     tracking-[0.16em]
@@ -369,9 +369,9 @@ export default function Contact() {
                 <p
                   className="
                     mt-1
-                    text-[14px]
+                    text-[16px]
                     leading-6
-                    text-[#667576]
+                    text-[#343535]
                   "
                 >
                   Official location details
@@ -394,7 +394,7 @@ export default function Contact() {
             >
               <p
                 className="
-                  text-[13px]
+                  text-[16px]
                   font-semibold
                   text-[#263F41]
                 "
@@ -447,9 +447,9 @@ export default function Contact() {
               <p
                 className="
                   mt-4
-                  text-[12px]
+                  text-[14px]
                   leading-5
-                  text-[#819091]
+                  text-[#3c3c3c]
                 "
               >
                 Official Facebook, LinkedIn and
@@ -698,7 +698,7 @@ export default function Contact() {
           <div className="mb-7 text-center">
             <p
               className="
-                text-[12px]
+                text-[14px]
                 font-semibold
                 uppercase
                 tracking-[0.18em]
@@ -728,9 +728,9 @@ export default function Contact() {
                 mx-auto
                 mt-3
                 max-w-[600px]
-                text-[14px]
+                text-[16px]
                 leading-6
-                text-[#667576]
+                text-[#2d2e2e]
               "
             >
               Our official location and
@@ -806,9 +806,9 @@ export default function Contact() {
                   mx-auto
                   mt-2
                   max-w-[420px]
-                  text-[13px]
+                  text-[15px]
                   leading-6
-                  text-[#667576]
+                  text-[#303131]
                 "
               >
                 Map will be added after the
@@ -863,7 +863,7 @@ function ContactCard({
       <div className="min-w-0">
         <p
           className="
-            text-[10px]
+            text-[14px]
             font-semibold
             uppercase
             tracking-[0.16em]
@@ -878,7 +878,7 @@ function ContactCard({
             mt-1
             break-words
 
-            text-[13px]
+            text-[15px]
             font-semibold
             leading-5
             text-[#263F41]
@@ -1078,7 +1078,7 @@ function FormField({
 
           px-4
 
-          text-[14px]
+          text-[16px]
           text-[#263F41]
 
           outline-none

@@ -42,7 +42,7 @@ export default function PostOpWellness() {
             Post-Operative Care & Wellness
           </h2>
 
-          <p className="mt-4 text-[15px] leading-7 text-[#667576]">
+          <p className="mt-4 text-[16px] leading-7 text-[#1c1c1c]">
             Recovery support that goes beyond the
             procedure, helping patients transition
             comfortably through rehabilitation and
@@ -85,11 +85,11 @@ export default function PostOpWellness() {
                   <Icon size={25} />
                 </div>
 
-                <h3 className="mt-5 text-[17px] font-semibold text-[#064B50]">
+                <h3 className="mt-5 text-[18px] font-semibold text-[#064B50]">
                   {title}
                 </h3>
 
-                <p className="mt-3 text-[13px] leading-6 text-[#667576]">
+                <p className="mt-3 text-[15px] leading-6 text-[#262727]">
                   {text}
                 </p>
               </div>
