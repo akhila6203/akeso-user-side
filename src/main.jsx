@@ -3,18 +3,39 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
+import "./i18n";
+
 import {
   SpecialitiesProvider,
 } from "./context/SpecialitiesContext";
 
-
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-  <SpecialitiesProvider>
-    <App />
-  </SpecialitiesProvider>
-</BrowserRouter>,
-  // <BrowserRouter>
-  //   <App />
-  // </BrowserRouter>,
+    <SpecialitiesProvider>
+      <App />
+    </SpecialitiesProvider>
+  </BrowserRouter>
 );
+
+
+
+// import React from "react";
+// import { createRoot } from "react-dom/client";
+// import { BrowserRouter } from "react-router-dom";
+// import App from "./App";
+// import "./index.css";
+// import {
+//   SpecialitiesProvider,
+// } from "./context/SpecialitiesContext";
+
+
+// createRoot(document.getElementById("root")).render(
+//   <BrowserRouter>
+//   <SpecialitiesProvider>
+//     <App />
+//   </SpecialitiesProvider>
+// </BrowserRouter>,
+//   // <BrowserRouter>
+//   //   <App />
+//   // </BrowserRouter>,
+// );
