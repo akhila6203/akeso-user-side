@@ -1,4 +1,5 @@
 
+
 import { useEffect, useState } from "react";
 
 import {
@@ -26,15 +27,20 @@ import {
 } from "../utils/auth";
 
 import {
-  specialties,
   healthLibrary,
   knowledgeCenter,
   services,
   international,
 } from "../data/navigation";
 
+import { useSpecialities } from "../context/SpecialitiesContext";
+import { getSpecialityIcon } from "../utils/specialityIcon";
+
 import CallbackModal from "./CallbackModal";
 import LanguageSwitcher from "./LanguageSwitcher";
+
+import { useSiteSettings } from "../context/SiteSettingsContext";
+import defaultLogo from "../assets/home/logo.png";
 
 /* ==========================================
    DESKTOP DROPDOWN ROW
@@ -294,6 +300,18 @@ function MobileAccordion({
 export default function Header({ onOpenAuth }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { settings } = useSiteSettings();
+
+  const {
+  specialities: apiSpecialities,
+  loading: specialitiesLoading,
+} = useSpecialities();
+
+const specialityMenuItems = apiSpecialities.map((item) => [
+  item.name,
+  item.slug,
+  getSpecialityIcon(item.name),
+]);
 
   const [mobileOpen, setMobileOpen] =
     useState(false);
@@ -497,11 +515,21 @@ export default function Header({ onOpenAuth }) {
               to="/"
               className="flex shrink-0 items-center"
             >
-              <img
+              {/* <img
                 src="/logo.png"
                 alt="Akeso Global Medical Services"
                 className="h-[54px] w-auto object-contain sm:h-[58px] lg:h-[64px] xl:h-[68px]"
-              />
+              /> */}
+              {/* || "/logo.png" */}
+<img
+  src={settings.logo || defaultLogo}
+  alt="Akeso Global Medical Services"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = defaultLogo;
+  }}
+  className="h-[54px] w-auto object-contain sm:h-[58px] lg:h-[64px] xl:h-[68px]"
+/>
             </Link>
 
             {/* ==================================
@@ -554,7 +582,8 @@ export default function Header({ onOpenAuth }) {
 
                 {specialityOpen && (
                   <DesktopDropdown
-                    items={specialties.slice(0, 6)}
+                    // items={specialties.slice(0, 6)}
+                    items={specialityMenuItems.slice(0, 6)}
                     prefix="speciality"
                     viewAllPath="/specialities"
                     viewAllText="View All Specialities"
@@ -851,11 +880,20 @@ export default function Header({ onOpenAuth }) {
             to="/"
             onClick={closeMobile}
           >
-            <img
+            {/* <img
               src="/logo.png"
               alt="Akeso Global Medical Services"
               className="h-[55px] w-auto object-contain"
-            />
+            /> */}
+            <img
+  src={settings.logo || defaultLogo}
+  alt="Akeso Global Medical Services"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = defaultLogo;
+  }}
+  className="h-[55px] w-auto object-contain"
+/>
           </Link>
 
           <button
@@ -899,9 +937,12 @@ export default function Header({ onOpenAuth }) {
             closeMenu={closeMobile}
           >
             <div className="space-y-[2px]">
-              {specialties
+              {/* {specialties
                 .slice(0, 6)
-                .map((item) => (
+                .map((item) => ( */}
+                {specialityMenuItems
+                  .slice(0, 6)
+                  .map((item) => (
                   <MobileItem
                     key={item[1]}
                     item={item}
@@ -1197,24 +1238,41 @@ export default function Header({ onOpenAuth }) {
 
 
 
-//  import { useEffect, useState } from "react";
-// import { Link, NavLink, useLocation, useNavigate, } from "react-router-dom";
+
+
+
+
+
+
+
+
+
+
+
+// import { useEffect, useState } from "react";
+
+// import {
+//   Link,
+//   NavLink,
+//   useLocation,
+//   useNavigate,
+// } from "react-router-dom";
+
 // import {
 //   ChevronDown,
 //   ChevronRight,
 //   Menu,
 //   X,
 //   Phone,
-// } from "lucide-react";
-
-// import {
 //   LogIn,
+//   LogOut,
 //   UserRound,
 // } from "lucide-react";
 
 // import {
 //   getUser,
 //   isLoggedIn,
+//   logout,
 // } from "../utils/auth";
 
 // import {
@@ -1226,84 +1284,50 @@ export default function Header({ onOpenAuth }) {
 // } from "../data/navigation";
 
 // import CallbackModal from "./CallbackModal";
-
-// import { useTranslation } from "react-i18next";
 // import LanguageSwitcher from "./LanguageSwitcher";
 
+// /* ==========================================
+//    DESKTOP DROPDOWN ROW
+// ========================================== */
 
-// function DropdownRow({ item, prefix, onNavigate, directPath = false, }) {
+// function DropdownRow({
+//   item,
+//   prefix,
+//   onNavigate,
+//   directPath = false,
+// }) {
 //   const Icon = item?.[2];
+
 //   const itemPath = directPath
 //     ? `/${item[1]}`
 //     : `/${prefix}/${item[1]}`;
 
 //   return (
 //     <Link
-//       // to={`/${prefix}/${item[1]}`}
 //       to={itemPath}
 //       onClick={onNavigate}
-//       className="
-//         group
-//         flex
-//         items-center
-//         gap-3
-//         px-4
-//         py-[10px]
-//         bg-white
-//         border-b
-//         border-[#e8eeee]
-//         last:border-b-0
-//         transition-all
-//         duration-200
-//         hover:bg-[#edf7f6]
-//       "
+//       className="group flex items-center gap-3 border-b border-[#e8eeee] bg-white px-4 py-[10px] transition-all duration-200 last:border-b-0 hover:bg-[#edf7f6]"
 //     >
-//       {/* ICON */}
-//       <div
-//         className="
-//           w-[25px]
-//           h-[25px]
-//           flex
-//           items-center
-//           justify-center
-//           shrink-0
-//         "
-//       >
+//       <div className="flex h-[25px] w-[25px] shrink-0 items-center justify-center">
 //         {Icon && (
 //           <Icon
 //             size={17}
 //             strokeWidth={1.6}
-//             className="
-//               text-[#C8942E]
-//               transition-colors
-//               duration-200
-//               group-hover:text-[#C8942E]
-//             "
+//             className="text-[#C8942E]"
 //           />
 //         )}
 //       </div>
 
-//       {/* TEXT */}
-//       <span
-//         className="
-//           text-[14px]
-//           leading-[20px]
-//           font-normal
-//           text-[#536466]
-//           transition-colors
-//           duration-200
-//           group-hover:text-[#064B50]
-//         "
-//       >
+//       <span className="text-[14px] leading-5 text-[#536466] transition-colors group-hover:text-[#064B50]">
 //         {item[0]}
 //       </span>
 //     </Link>
 //   );
 // }
 
-// /* =========================================================
+// /* ==========================================
 //    NORMAL DESKTOP DROPDOWN
-// ========================================================= */
+// ========================================== */
 
 // function DesktopDropdown({
 //   items = [],
@@ -1312,27 +1336,8 @@ export default function Header({ onOpenAuth }) {
 //   viewAllText,
 // }) {
 //   return (
-//     <div
-//       className="
-//         absolute
-//         left-0
-//         top-full
-//         pt-[2px]
-//         z-[150]
-//       "
-//     >
-//       <div
-//         className="
-//           w-[260px]
-//           bg-white
-//           border
-//           border-[#e5eceb]
-//           rounded-b-lg
-//           rounded-t-sm
-//           shadow-[0_10px_28px_rgba(6,75,80,0.13)]
-//           overflow-hidden
-//         "
-//       >
+//     <div className="absolute left-0 top-full z-[150] pt-[2px]">
+//       <div className="w-[260px] overflow-hidden rounded-b-lg rounded-t-sm border border-[#e5eceb] bg-white shadow-[0_10px_28px_rgba(6,75,80,0.13)]">
 //         {items.map((item) => (
 //           <DropdownRow
 //             key={item[1]}
@@ -1341,40 +1346,16 @@ export default function Header({ onOpenAuth }) {
 //           />
 //         ))}
 
-//         {/* VIEW ALL */}
 //         {viewAllPath && (
 //           <Link
 //             to={viewAllPath}
-//             className="
-//               group
-//               flex
-//               items-center
-//               justify-between
-//               gap-2
-//               px-4
-//               py-[11px]
-//               bg-white
-//               border-t
-//               border-[#e5eceb]
-//               text-[14px]
-//               font-medium
-//               text-[#064B50]
-//               transition-all
-//               duration-200
-//               hover:bg-[#edf7f6]
-//             "
+//             className="group flex items-center justify-between gap-2 border-t border-[#e5eceb] bg-white px-4 py-[11px] text-[14px] font-medium text-[#064B50] transition hover:bg-[#edf7f6]"
 //           >
 //             <span>{viewAllText}</span>
 
 //             <ChevronRight
 //               size={15}
-//               strokeWidth={1.8}
-//               className="
-//                 text-[#C8942E]
-//                 transition-transform
-//                 duration-200
-//                 group-hover:translate-x-1
-//               "
+//               className="text-[#C8942E] transition-transform group-hover:translate-x-1"
 //             />
 //           </Link>
 //         )}
@@ -1383,35 +1364,17 @@ export default function Header({ onOpenAuth }) {
 //   );
 // }
 
-// /* =========================================================
+// /* ==========================================
 //    HEALTH LIBRARY DESKTOP DROPDOWN
-// ========================================================= */
+// ========================================== */
 
 // function HealthLibraryDropdown() {
-//   const [knowledgeOpen, setKnowledgeOpen] = useState(false);
+//   const [knowledgeOpen, setKnowledgeOpen] =
+//     useState(false);
 
 //   return (
-//     <div
-//       className="
-//         absolute
-//         left-0
-//         top-full
-//         pt-[2px]
-//         z-[150]
-//       "
-//     >
-//       <div
-//         className="
-//           relative
-//           w-[260px]
-//           bg-white
-//           border
-//           border-[#e5eceb]
-//           rounded-b-lg
-//           rounded-t-sm
-//           shadow-[0_10px_28px_rgba(6,75,80,0.13)]
-//         "
-//       >
+//     <div className="absolute left-0 top-full z-[150] pt-[2px]">
+//       <div className="relative w-[260px] rounded-b-lg border border-[#e5eceb] bg-white shadow-[0_10px_28px_rgba(6,75,80,0.13)]">
 //         {healthLibrary.map((item) => {
 //           const Icon = item?.[2];
 
@@ -1420,95 +1383,42 @@ export default function Header({ onOpenAuth }) {
 //               <div
 //                 key={item[1]}
 //                 className="relative"
-//                 onMouseEnter={() => setKnowledgeOpen(true)}
-//                 onMouseLeave={() => setKnowledgeOpen(false)}
+//                 onMouseEnter={() =>
+//                   setKnowledgeOpen(true)
+//                 }
+//                 onMouseLeave={() =>
+//                   setKnowledgeOpen(false)
+//                 }
 //               >
 //                 <button
 //                   type="button"
 //                   onClick={() =>
 //                     setKnowledgeOpen((prev) => !prev)
 //                   }
-//                   className="
-//                     group
-//                     w-full
-//                     flex
-//                     items-center
-//                     gap-3
-//                     px-4
-//                     py-[10px]
-//                     bg-white
-//                     border-b
-//                     border-[#e8eeee]
-//                     transition-all
-//                     duration-200
-//                    hover:bg-[#edf7f6]
-//                   "
+//                   className="group flex w-full items-center gap-3 border-b border-[#e8eeee] bg-white px-4 py-[10px] transition hover:bg-[#edf7f6]"
 //                 >
-//                   {/* ICON */}
-
-//                   <div
-//                     className="
-//                       w-[25px]
-//                       h-[25px]
-//                       flex
-//                       items-center
-//                       justify-center
-//                       shrink-0
-//                     "
-//                   >
+//                   <div className="flex h-[25px] w-[25px] shrink-0 items-center justify-center">
 //                     {Icon && (
 //                       <Icon
 //                         size={17}
 //                         strokeWidth={1.6}
-//                         className="
-//                           text-[#C8942E]
-//                           transition-colors
-//                           group-hover:text-[#C8942E]
-//                         "
+//                         className="text-[#C8942E]"
 //                       />
 //                     )}
 //                   </div>
 
-//                   {/* TEXT */}
-
-//                   <span
-//                     className="
-//                       flex-1
-//                       text-left
-//                       text-[14px]
-//                       leading-[20px]
-//                       font-normal
-//                       text-[#536466]
-//                       group-hover:text-[#064B50]
-//                     "
-//                   >
+//                   <span className="flex-1 text-left text-[14px] text-[#536466] group-hover:text-[#064B50]">
 //                     {item[0]}
 //                   </span>
 
 //                   <ChevronRight
 //                     size={15}
-//                     strokeWidth={1.8}
 //                     className="text-[#C8942E]"
 //                   />
 //                 </button>
 
-
 //                 {knowledgeOpen && (
-//                   <div
-//                     className="
-//                       absolute
-//                       left-full
-//                       top-0
-//                       ml-[2px]
-//                       w-[220px]
-//                       bg-white
-//                       border
-//                       border-[#e5eceb]
-//                       rounded-lg
-//                       shadow-[0_10px_28px_rgba(6,75,80,0.13)]
-//                       overflow-hidden
-//                     "
-//                   >
+//                   <div className="absolute left-full top-0 ml-[2px] w-[220px] overflow-hidden rounded-lg border border-[#e5eceb] bg-white shadow-[0_10px_28px_rgba(6,75,80,0.13)]">
 //                     {knowledgeCenter.map((subItem) => (
 //                       <DropdownRow
 //                         key={subItem[1]}
@@ -1536,9 +1446,9 @@ export default function Header({ onOpenAuth }) {
 //   );
 // }
 
-// /* =========================================================
+// /* ==========================================
 //    MOBILE DROPDOWN ITEM
-// ========================================================= */
+// ========================================== */
 
 // function MobileItem({
 //   item,
@@ -1547,66 +1457,38 @@ export default function Header({ onOpenAuth }) {
 //   directPath = false,
 // }) {
 //   const Icon = item?.[2];
-//    const itemPath = directPath
+
+//   const itemPath = directPath
 //     ? `/${item[1]}`
 //     : `/${prefix}/${item[1]}`;
 
 //   return (
 //     <Link
-//       // to={`/${prefix}/${item[1]}`}
-//        to={itemPath}
+//       to={itemPath}
 //       onClick={closeMenu}
-//       className="
-//         group
-//         flex
-//         items-center
-//         gap-3
-//         px-3
-//         py-[9px]
-//         rounded-lg
-//         transition-colors
-//         hover:bg-[#edf7f6]
-//       "
+//       className="group flex items-center gap-3 rounded-lg px-3 py-[9px] transition-colors hover:bg-[#edf7f6]"
 //     >
-//       <div
-//         className="
-//           w-7
-//           h-7
-//           flex
-//           items-center
-//           justify-center
-//           shrink-0
-//         "
-//       >
+//       <div className="flex h-7 w-7 shrink-0 items-center justify-center">
 //         {Icon && (
 //           <Icon
 //             size={17}
 //             strokeWidth={1.6}
-//             className="
-//               text-[#C8942E]
-//               group-hover:text-[#C8942E]
-//             "
+//             className="text-[#C8942E]"
 //           />
 //         )}
 //       </div>
 
-//       <span
-//         className="
-//           text-[14px]
-//           font-normal
-//           text-[#536466]
-//           group-hover:text-[#064B50]
-//         "
-//       >
+//       <span className="text-[14px] text-[#536466] group-hover:text-[#064B50]">
 //         {item[0]}
 //       </span>
 //     </Link>
 //   );
 // }
 
-// /* =========================================================
+// /* ==========================================
 //    MOBILE ACCORDION
-// ========================================================= */
+// ========================================== */
+
 // function MobileAccordion({
 //   title,
 //   mainPath,
@@ -1618,95 +1500,56 @@ export default function Header({ onOpenAuth }) {
 
 //   return (
 //     <div className="border-b border-[#e5eceb]">
-//       <div
-//         className="
-//           relative
-//           w-full
-//           flex
-//           items-center
-//           justify-between
-//           py-[14px]
-//         "
-//       >
-//         {/* MAIN HEADING - OPENS MAIN PAGE */}
+//       <div className="flex w-full items-center justify-between py-[14px]">
 //         <Link
 //           to={mainPath}
 //           onClick={closeMenu}
-//           className={`
-//             flex-1
-//             text-left
-//             text-[15px]
-//             font-medium
-//             transition-colors
-//             duration-200
-
-//             ${
-//               active
-//                 ? "text-[#C8942E]"
-//                 : "text-[#064B50] hover:text-[#C8942E]"
-//             }
-//           `}
+//           className={`flex-1 text-left text-[15px] font-medium transition-colors ${
+//             active
+//               ? "text-[#C8942E]"
+//               : "text-[#064B50] hover:text-[#C8942E]"
+//           }`}
 //         >
 //           {title}
 //         </Link>
 
-//         {/* ARROW ONLY - OPENS/CLOSES DROPDOWN */}
 //         <button
 //           type="button"
-//           onClick={(e) => {
-//             e.preventDefault();
-//             e.stopPropagation();
-//             setOpen((prev) => !prev);
-//           }}
+//           onClick={() => setOpen((prev) => !prev)}
 //           aria-label={`Toggle ${title} menu`}
-//           className="
-//             w-9
-//             h-9
-//             flex
-//             items-center
-//             justify-center
-//             rounded-lg
-//             text-[#C8942E]
-//             transition-colors
-//             hover:bg-[#edf7f6]
-//           "
+//           aria-expanded={open}
+//           className="flex h-9 w-9 items-center justify-center rounded-lg text-[#C8942E] transition hover:bg-[#edf7f6]"
 //         >
 //           <ChevronDown
 //             size={17}
 //             strokeWidth={1.8}
-//             className={`
-//               transition-transform
-//               duration-300
-//               ${open ? "rotate-180" : ""}
-//             `}
+//             className={`transition-transform duration-300 ${
+//               open ? "rotate-180" : ""
+//             }`}
 //           />
 //         </button>
 //       </div>
 
 //       {open && (
-//         <div className="pb-3">
-//           {children}
-//         </div>
+//         <div className="pb-3">{children}</div>
 //       )}
 //     </div>
 //   );
 // }
 
-// /* =========================================================
-//    MAIN HEADER
-// ========================================================= */
+// /* ==========================================
+//    MAIN HEADER COMPONENT
+// ========================================== */
 
-// // export default function Header() {
-// export default function Header({
-//   onOpenAuth,
-// }) {
+// export default function Header({ onOpenAuth }) {
 //   const location = useLocation();
 //   const navigate = useNavigate();
 
-//   const { t } = useTranslation();
+//   const [mobileOpen, setMobileOpen] =
+//     useState(false);
 
-//   const [mobileOpen, setMobileOpen] = useState(false);
-//   const [callbackOpen, setCallbackOpen] = useState(false);
+//   const [callbackOpen, setCallbackOpen] =
+//     useState(false);
 
 //   const [specialityOpen, setSpecialityOpen] =
 //     useState(false);
@@ -1717,69 +1560,67 @@ export default function Header({ onOpenAuth }) {
 //   const [servicesOpen, setServicesOpen] =
 //     useState(false);
 
-//   const [
-//     internationalOpen,
-//     setInternationalOpen,
-//   ] = useState(false);
+//   const [internationalOpen, setInternationalOpen] =
+//     useState(false);
 
-//   const [
-//     mobileKnowledgeOpen,
-//     setMobileKnowledgeOpen,
-//   ] = useState(false);
-
+//   const [mobileKnowledgeOpen, setMobileKnowledgeOpen] =
+//     useState(false);
 
 //   const [loggedIn, setLoggedIn] =
-//   useState(isLoggedIn());
+//     useState(isLoggedIn());
 
-// const [currentUser, setCurrentUser] =
-//   useState(getUser());
+//   const [currentUser, setCurrentUser] =
+//     useState(getUser());
 
-// useEffect(() => {
-//   const updateAuth = () => {
-//     setLoggedIn(isLoggedIn());
-//     setCurrentUser(getUser());
-//   };
+//   /* ==========================================
+//      UPDATE AUTH STATE
+//   ========================================== */
 
-//   window.addEventListener(
-//     "akeso-auth-change",
-//     updateAuth
-//   );
+//   useEffect(() => {
+//     const updateAuth = () => {
+//       setLoggedIn(isLoggedIn());
+//       setCurrentUser(getUser());
+//     };
 
-//   window.addEventListener(
-//     "storage",
-//     updateAuth
-//   );
-
-//   return () => {
-//     window.removeEventListener(
+//     window.addEventListener(
 //       "akeso-auth-change",
 //       updateAuth
 //     );
 
-//     window.removeEventListener(
+//     window.addEventListener(
 //       "storage",
 //       updateAuth
 //     );
-//   };
-// }, []);
-//   /* =======================================================
-//      CLOSE MOBILE MENU ON ROUTE CHANGE
-//   ======================================================= */
+
+//     return () => {
+//       window.removeEventListener(
+//         "akeso-auth-change",
+//         updateAuth
+//       );
+
+//       window.removeEventListener(
+//         "storage",
+//         updateAuth
+//       );
+//     };
+//   }, []);
+
+//   /* ==========================================
+//      CLOSE MENU ON ROUTE CHANGE
+//   ========================================== */
 
 //   useEffect(() => {
 //     setMobileOpen(false);
 //   }, [location.pathname]);
 
-//   /* =======================================================
-//      BODY SCROLL
-//   ======================================================= */
+//   /* ==========================================
+//      BODY SCROLL CONTROL
+//   ========================================== */
 
 //   useEffect(() => {
-//     if (mobileOpen) {
-//       document.body.style.overflow = "hidden";
-//     } else {
-//       document.body.style.overflow = "";
-//     }
+//     document.body.style.overflow = mobileOpen
+//       ? "hidden"
+//       : "";
 
 //     return () => {
 //       document.body.style.overflow = "";
@@ -1790,140 +1631,149 @@ export default function Header({ onOpenAuth }) {
 //     setMobileOpen(false);
 //   };
 
-//   const isActive = (path) => {
-//     return location.pathname.startsWith(path);
+//   const isActive = (path) =>
+//     location.pathname.startsWith(path);
+
+//   /* ==========================================
+//      LOGOUT
+//   ========================================== */
+
+//   const handleLogout = () => {
+//     logout();
+
+//     setLoggedIn(false);
+//     setCurrentUser(null);
+//     setMobileOpen(false);
+
+//     window.dispatchEvent(
+//       new Event("akeso-auth-change")
+//     );
+
+//     navigate("/", { replace: true });
 //   };
 
-//   /* =======================================================
-//      REUSABLE DESKTOP MENU CLASS
-//   ======================================================= */
+//   /* ==========================================
+//      LOGIN
+//   ========================================== */
 
-// const desktopDropdownClass = (open, active) => `
-//   relative
-//   flex
-//   items-center
-//   gap-1
-//   px-3
-//   2xl:px-4
-//   py-[10px]
-//   text-[14px]
-//   2xl:text-[15px]
-//   font-medium
-//   whitespace-nowrap
-//   transition-colors
-//   duration-200
+//   const handleLogin = () => {
+//     closeMobile();
 
-//   after:absolute
-//   after:left-3
-//   after:right-3
-//   after:bottom-[5px]
-//   after:h-[2px]
-//   after:bg-[#C8942E]
-//   after:origin-left
-//   after:transition-transform
-//   after:duration-200
+//     if (onOpenAuth) {
+//       onOpenAuth("login");
+//     } else {
+//       navigate("/login");
+//     }
+//   };
 
-//   ${
-//     open || active
-//       ? "text-[#064B50] after:scale-x-100"
-//       : `
-//         text-[#263F41]
-//         hover:text-[#064B50]
-//         after:scale-x-0
-//         hover:after:scale-x-100
-//       `
-//   }
-// `;
-//   /* =======================================================
-//      HEADER
-//   ======================================================= */
+//   /* ==========================================
+//      OUR DOCTORS PROTECTED NAVIGATION
+//   ========================================== */
+
+//   const handleDoctorsNavigation = () => {
+//     closeMobile();
+
+//     if (isLoggedIn()) {
+//       navigate("/doctors");
+//     } else if (onOpenAuth) {
+//       onOpenAuth("login", "/doctors");
+//     } else {
+//       navigate(
+//         `/login?redirect=${encodeURIComponent(
+//           "/doctors"
+//         )}`
+//       );
+//     }
+//   };
+
+//   /* ==========================================
+//      DESKTOP NAVIGATION STYLES
+//   ========================================== */
+
+//   const desktopDropdownClass = (
+//     open,
+//     active
+//   ) => `
+//     relative
+//     flex
+//     items-center
+//     gap-1
+//     px-3
+//     2xl:px-4
+//     py-[10px]
+//     text-[14px]
+//     2xl:text-[15px]
+//     font-medium
+//     whitespace-nowrap
+//     transition-colors
+//     duration-200
+
+//     after:absolute
+//     after:left-3
+//     after:right-3
+//     after:bottom-[5px]
+//     after:h-[2px]
+//     after:bg-[#C8942E]
+//     after:origin-left
+//     after:transition-transform
+//     after:duration-200
+
+//     ${
+//       open || active
+//         ? "text-[#064B50] after:scale-x-100"
+//         : "text-[#263F41] hover:text-[#064B50] after:scale-x-0 hover:after:scale-x-100"
+//     }
+//   `;
+
+//   /* ==========================================
+//      MOBILE NORMAL LINK CLASS
+//   ========================================== */
+
+//   const mobileLinkClass =
+//     "group flex w-full items-center justify-between border-b border-[#e5eceb] py-[14px] text-[15px] font-medium text-[#064B50] transition-colors hover:text-[#C8942E]";
 
 //   return (
 //     <>
-//       <header
-//         className="
-//           sticky
-//           top-0
-//           z-50
-//           bg-white
-//           border-b
-//           border-[#e5eceb]
-//           shadow-[0_3px_16px_rgba(6,75,80,0.06)]
-//         "
-//       >
-//         <div
-//           className="
-//             max-w-[1500px]
-//             mx-auto
-//             px-4
-//             sm:px-5
-//             lg:px-6
-//             xl:px-7
-//           "
-//         >
-//           <div
-//             className="
-//               min-h-[76px]
-//               lg:min-h-[82px]
-//               flex
-//               items-center
-//               justify-between
-//               gap-4
-//             "
-//           >
-//             {/* =================================================
-//                 LOGO
-//             ================================================= */}
+//       {/* ======================================
+//           MAIN HEADER
+//       ====================================== */}
 
+//       <header className="sticky top-0 z-50 border-b border-[#e5eceb] bg-white shadow-[0_3px_16px_rgba(6,75,80,0.06)]">
+//         <div className="mx-auto max-w-[1500px] px-4 sm:px-5 lg:px-6 xl:px-7">
+//           <div className="flex min-h-[76px] items-center justify-between gap-4 lg:min-h-[82px]">
+
+//             {/* LOGO */}
 //             <Link
 //               to="/"
-//               className="
-//                 flex
-//                 items-center
-//                 shrink-0
-//               "
+//               className="flex shrink-0 items-center"
 //             >
 //               <img
 //                 src="/logo.png"
 //                 alt="Akeso Global Medical Services"
-//                 className="
-//                   h-[54px]
-//                   sm:h-[58px]
-//                   lg:h-[64px]
-//                   xl:h-[68px]
-//                   w-auto
-//                   object-contain
-//                 "
+//                 className="h-[54px] w-auto object-contain sm:h-[58px] lg:h-[64px] xl:h-[68px]"
 //               />
 //             </Link>
 
-//             {/* =================================================
+//             {/* ==================================
 //                 DESKTOP NAVIGATION
-//             ================================================= */}
+//             ================================== */}
 
-//             <nav
-//               className="
-//                 hidden
-//                 xl:flex
-//                 flex-1
-//                 items-center
-//                 justify-center
-//                 gap-0
-//               "
-//             >
+//             <nav className="hidden flex-1 items-center justify-center gap-0 xl:flex">
 
-//                 <NavLink
-//                     to="/"
-//                     className={({ isActive }) =>
-//                         desktopDropdownClass(false, isActive)
-//                     }
-//                     >
-//                     Home
-//                 </NavLink>
-//               {/* ===============================================
-//                   SPECIALITY
-//               =============================================== */}
+//               {/* HOME */}
+//               <NavLink
+//                 to="/"
+//                 className={({ isActive }) =>
+//                   desktopDropdownClass(
+//                     false,
+//                     isActive
+//                   )
+//                 }
+//               >
+//                 Home
+//               </NavLink>
 
+//               {/* SPECIALITY */}
 //               <div
 //                 className="relative"
 //                 onMouseEnter={() =>
@@ -1940,20 +1790,15 @@ export default function Header({ onOpenAuth }) {
 //                     isActive("/special")
 //                   )}
 //                 >
-//                   <span>Speciality</span>
+//                   Speciality
 
 //                   <ChevronDown
 //                     size={14}
-//                     strokeWidth={1.8}
-//                     className={`
-//                       transition-transform
-//                       duration-200
-//                       ${
-//                         specialityOpen
-//                           ? "rotate-180"
-//                           : ""
-//                       }
-//                     `}
+//                     className={`transition-transform ${
+//                       specialityOpen
+//                         ? "rotate-180"
+//                         : ""
+//                     }`}
 //                   />
 //                 </Link>
 
@@ -1967,10 +1812,7 @@ export default function Header({ onOpenAuth }) {
 //                 )}
 //               </div>
 
-//               {/* ===============================================
-//                   HEALTH LIBRARY
-//               =============================================== */}
-
+//               {/* HEALTH LIBRARY */}
 //               <div
 //                 className="relative"
 //                 onMouseEnter={() =>
@@ -1987,20 +1829,15 @@ export default function Header({ onOpenAuth }) {
 //                     isActive("/health-library")
 //                   )}
 //                 >
-//                   <span>Health Library</span>
+//                   Health Library
 
 //                   <ChevronDown
 //                     size={14}
-//                     strokeWidth={1.8}
-//                     className={`
-//                       transition-transform
-//                       duration-200
-//                       ${
-//                         healthOpen
-//                           ? "rotate-180"
-//                           : ""
-//                       }
-//                     `}
+//                     className={`transition-transform ${
+//                       healthOpen
+//                         ? "rotate-180"
+//                         : ""
+//                     }`}
 //                   />
 //                 </Link>
 
@@ -2009,33 +1846,19 @@ export default function Header({ onOpenAuth }) {
 //                 )}
 //               </div>
 
-//               {/* ===============================================
-//                   OUR DOCTORS
-//               =============================================== */}
+//               {/* OUR DOCTORS */}
 //               <button
-//                   type="button"
-//                   onClick={() => {
-//                     if (isLoggedIn()) {
-//                       navigate("/doctors");
-//                     } else {
-//                       navigate(
-//                         `/login?redirect=${encodeURIComponent(
-//                           "/doctors"
-//                         )}`
-//                       );
-//                     }
-//                   }}
-//                   className={desktopDropdownClass(
-//                     false,
-//                     isActive("/doctors")
-//                   )}
-//                 >
-//                   Our Doctors
-//                 </button>
-//               {/* ===============================================
-//                   SERVICES
-//               =============================================== */}
+//                 type="button"
+//                 onClick={handleDoctorsNavigation}
+//                 className={desktopDropdownClass(
+//                   false,
+//                   isActive("/doctors")
+//                 )}
+//               >
+//                 Our Doctors
+//               </button>
 
+//               {/* SERVICES */}
 //               <div
 //                 className="relative"
 //                 onMouseEnter={() =>
@@ -2052,20 +1875,15 @@ export default function Header({ onOpenAuth }) {
 //                     isActive("/services")
 //                   )}
 //                 >
-//                   <span>Services</span>
+//                   Services
 
 //                   <ChevronDown
 //                     size={14}
-//                     strokeWidth={1.8}
-//                     className={`
-//                       transition-transform
-//                       duration-200
-//                       ${
-//                         servicesOpen
-//                           ? "rotate-180"
-//                           : ""
-//                       }
-//                     `}
+//                     className={`transition-transform ${
+//                       servicesOpen
+//                         ? "rotate-180"
+//                         : ""
+//                     }`}
 //                   />
 //                 </Link>
 
@@ -2079,10 +1897,7 @@ export default function Header({ onOpenAuth }) {
 //                 )}
 //               </div>
 
-//               {/* ===============================================
-//                   INTERNATIONAL PATIENTS
-//               =============================================== */}
-
+//               {/* INTERNATIONAL PATIENTS */}
 //               <div
 //                 className="relative"
 //                 onMouseEnter={() =>
@@ -2099,22 +1914,15 @@ export default function Header({ onOpenAuth }) {
 //                     isActive("/international")
 //                   )}
 //                 >
-//                   <span>
-//                     International Patients
-//                   </span>
+//                   International Patients
 
 //                   <ChevronDown
 //                     size={14}
-//                     strokeWidth={1.8}
-//                     className={`
-//                       transition-transform
-//                       duration-200
-//                       ${
-//                         internationalOpen
-//                           ? "rotate-180"
-//                           : ""
-//                       }
-//                     `}
+//                     className={`transition-transform ${
+//                       internationalOpen
+//                         ? "rotate-180"
+//                         : ""
+//                     }`}
 //                   />
 //                 </Link>
 
@@ -2128,10 +1936,7 @@ export default function Header({ onOpenAuth }) {
 //                 )}
 //               </div>
 
-//               {/* ===============================================
-//                   CONTACT
-//               =============================================== */}
-
+//               {/* CONTACT */}
 //               <NavLink
 //                 to="/contact"
 //                 className={({ isActive }) =>
@@ -2145,195 +1950,114 @@ export default function Header({ onOpenAuth }) {
 //               </NavLink>
 //             </nav>
 
-//             {/* =================================================
+//             {/* ==================================
 //                 RIGHT SIDE
-//             ================================================= */}
+//             ================================== */}
 
-//             <div
-//               className="
-//                 flex
-//                 items-center
-//                 gap-2
-//                 sm:gap-3
-//                 shrink-0
-//               "
-//             >
+//             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
 
-//               {/* ===============================================
-//                   REQUEST CALL BACK
-//               =============================================== */}
-
+//               {/* REQUEST CALL BACK */}
 //               <button
 //                 type="button"
 //                 onClick={() =>
 //                   setCallbackOpen(true)
 //                 }
-//                 className="
-//                   hidden
-//                   sm:flex
-//                   items-center
-//                   justify-center
-//                   gap-2
-//                   min-h-[44px]
-//                   px-4
-//                   xl:px-5
-//                   rounded-lg
-//                   bg-[#064B50]
-//                   border
-//                   border-[#064B50]
-//                   text-white
-//                   text-[13px]
-//                   xl:text-[14px]
-//                   font-semibold
-//                   whitespace-nowrap
-//                   shadow-[0_6px_18px_rgba(6,75,80,0.17)]
-//                   transition-all
-//                   duration-200
-
-//                   hover:bg-[#0B6B70]
-//                   hover:border-[#C8942E]
-//                   hover:shadow-[0_8px_22px_rgba(6,75,80,0.22)]
-//                 "
+//                 className="hidden min-h-[44px] items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-[#064B50] bg-[#064B50] px-4 text-[13px] font-semibold text-white shadow-[0_6px_18px_rgba(6,75,80,0.17)] transition-all duration-200 hover:border-[#C8942E] hover:bg-[#0B6B70] sm:flex xl:px-5 xl:text-[14px]"
 //               >
 //                 <Phone
 //                   size={16}
-//                   strokeWidth={2}
 //                   className="text-[#C8942E]"
 //                 />
-
 //                 Request Call Back
 //               </button>
 
+//               {/* ==================================
+//                   DESKTOP PROFILE + LOGOUT
+//               ================================== */}
 
-//               {loggedIn ? (
-//   <button
-//     type="button"
-//     onClick={() =>
-//       navigate("/profile")
-//     }
-//     className="
-//       flex
-//       h-[40px]
-//       items-center
-//       gap-2
-//       rounded-full
-//       border
-//       border-[#064B50]/20
-//       bg-[#eef7f6]
-//       px-4
-//       text-[13px]
-//       font-semibold
-//       text-[#064B50]
-//       transition
-//       hover:bg-[#064B50]
-//       hover:border-[#C8942E]
-//       hover:shadow-[0_8px_22px_rgba(6,75,80,0.22)]
-//       hover:text-white
-//     "
-//   >
-//     <UserRound size={16} />
-
-//     {currentUser?.name
-//       ? currentUser.name.split(" ")[0]
-//       : "Profile"}
-//   </button>
-// ) : (
-//   <button
-//     type="button"
-//     // onClick={() =>
-//     //   navigate("/login")
-//     // }
-//     onClick={() =>
-//   onOpenAuth?.("login")
-// }
-//     className="
-//       flex
-//       h-[40px]
-//       items-center
-//       gap-2
-//       rounded-full
-//       bg-[#064B50]
-//       border
-//                   border-[#064B50]
-//       px-5
-//       text-[13px]
-//       font-semibold
-//       text-white
-//       transition
-//       hover:bg-[#064B50]
-//     "
-//   >
-//     <LogIn size={16} />
-
-//     Login
-//   </button>
-// )}
-
-//              {/* LANGUAGE SWITCHER - ALL DEVICES */}
-// <div className="flex shrink-0 items-center">
-//   <LanguageSwitcher />
-// </div>
-
-
-// {/* ===============================================
-//     TEMP PATIENT PROFILE UI TEST
-// =============================================== */}
-// {/* 
+//               <div className="hidden items-center gap-2 xl:flex">
+//                 {loggedIn ? (
+//                   <>
+//                     {/* PROFILE */}
+                    
+// {/* PROFILE - DESKTOP ONLY ICON */}
 // <button
 //   type="button"
-//   onClick={() =>
-//     navigate("/patient-profile-demo")
-//   }
+//   onClick={() => navigate("/profile")}
+//   title="My Profile"
+//   aria-label="My Profile"
 //   className="
-//     hidden
-//     sm:flex
-//     h-[40px]
-//     items-center
-//     gap-2
+//     flex h-[42px] w-[42px] shrink-0
+//     items-center justify-center
 //     rounded-full
-//     border
-//     border-[#C8942E]/40
-//     bg-[#fffaf1]
-//     px-4
-//     text-[13px]
-//     font-semibold
+//     border border-[#064B50]/30
+//     bg-[#eef7f6]
 //     text-[#064B50]
-//     transition-all
-//     duration-200
+//     transition-all duration-200
+//     hover:border-[#C8942E]
 //     hover:bg-[#064B50]
-//     hover:border-[#064B50]
 //     hover:text-white
 //   "
 // >
-//   <UserRound size={16} />
+//   <UserRound size={20} strokeWidth={1.8} />
+// </button>
 
-//   Patient Demo
-// </button> */}
-//               {/* ===============================================
-//                   MOBILE MENU BUTTON
-//               =============================================== */}
+//                     {/* <button
+//                       type="button"
+//                       onClick={() =>
+//                         navigate("/profile")
+//                       }
+//                       className="flex h-[40px] items-center gap-2 rounded-full border border-[#064B50]/20 bg-[#eef7f6] px-4 text-[13px] font-semibold text-[#064B50] transition hover:border-[#C8942E] hover:bg-[#064B50] hover:text-white"
+//                     >
+//                       <UserRound size={16} />
 
+//                       <span className="max-w-[100px] truncate">
+//                         {currentUser?.name
+//                           ? currentUser.name.split(" ")[0]
+//                           : "Profile"}
+//                       </span>
+//                     </button> */}
+
+//                     {/* LOGOUT */}
+//                     <button
+//                       type="button"
+//                       onClick={handleLogout}
+//                       className="flex h-[40px] items-center gap-2 rounded-full border border-[#C8942E]/60 bg-white px-4 text-[13px] font-semibold text-[#064B50] transition hover:bg-[#C8942E] hover:text-white"
+//                     >
+//                       <LogOut size={16} />
+//                       Logout
+//                     </button>
+//                   </>
+//                 ) : (
+//                   <button
+//                     type="button"
+//                     onClick={handleLogin}
+//                     className="flex h-[40px] items-center gap-2 rounded-full border border-[#064B50] bg-[#064B50] px-5 text-[13px] font-semibold text-white transition hover:bg-[#0B6268]"
+//                   >
+//                     <LogIn size={16} />
+//                     Login
+//                   </button>
+//                 )}
+//               </div>
+
+//               {/* LANGUAGE SWITCHER */}
+//               <div className="flex shrink-0 items-center">
+//                 <LanguageSwitcher />
+//               </div>
+
+//               {/* MOBILE MENU BUTTON */}
 //               <button
 //                 type="button"
 //                 onClick={() =>
 //                   setMobileOpen((prev) => !prev)
 //                 }
-//                 aria-label="Open navigation menu"
-//                 className="
-//                   xl:hidden
-//                   w-11
-//                   h-11
-//                   rounded-lg
-//                   border
-//                   border-[#dbe7e6]
-//                   bg-white
-//                   flex
-//                   items-center
-//                   justify-center
-//                   text-[#064B50]
-//                   transition-colors
-//                   hover:bg-[#edf7f6]
-//                 "
+//                 aria-label={
+//                   mobileOpen
+//                     ? "Close navigation menu"
+//                     : "Open navigation menu"
+//                 }
+//                 aria-expanded={mobileOpen}
+//                 className="flex h-11 w-11 items-center justify-center rounded-lg border border-[#dbe7e6] bg-white text-[#064B50] transition-colors hover:bg-[#edf7f6] xl:hidden"
 //               >
 //                 {mobileOpen ? (
 //                   <X size={22} />
@@ -2344,85 +2068,35 @@ export default function Header({ onOpenAuth }) {
 //             </div>
 //           </div>
 //         </div>
-
-//         {/* =================================================
-//             SMALL BRAND LINE
-//         ================================================= */}
-
-//         {/* <div
-//           className="
-//             h-[2px]
-//             w-full
-//             bg-gradient-to-r
-//             from-[#064B50]
-//             via-[#C8942E]
-//             to-[#E85C91]
-//             opacity-90
-//           "
-//         /> */}
 //       </header>
 
-//       {/* ===================================================
+//       {/* ======================================
 //           MOBILE OVERLAY
-//       =================================================== */}
+//       ====================================== */}
 
 //       {mobileOpen && (
 //         <div
-//           className="
-//             fixed
-//             inset-0
-//             z-[70]
-//             bg-[#042f32]/45
-//             backdrop-blur-[2px]
-//             xl:hidden
-//           "
+//           className="fixed inset-0 z-[70] bg-[#042f32]/45 backdrop-blur-[2px] xl:hidden"
 //           onClick={closeMobile}
+//           aria-hidden="true"
 //         />
 //       )}
 
-//       {/* ===================================================
-//           MOBILE / TABLET MENU
-//       =================================================== */}
+//       {/* ======================================
+//           MOBILE / TABLET SIDEBAR
+//       ====================================== */}
 
 //       <aside
-//         className={`
-//           fixed
-//           top-0
-//           right-0
-//           z-[80]
-//           h-screen
-//           w-[90%]
-//           max-w-[410px]
-//           bg-white
-//           shadow-2xl
-//           xl:hidden
-//           transform
-//           transition-transform
-//           duration-300
-//           ease-in-out
-
-//           ${
-//             mobileOpen
-//               ? "translate-x-0"
-//               : "translate-x-full"
-//           }
-//         `}
+//         aria-label="Mobile navigation"
+//         aria-hidden={!mobileOpen}
+//         className={`fixed right-0 top-0 z-[80] h-screen w-[90%] max-w-[410px] transform bg-white shadow-2xl transition-transform duration-300 ease-in-out xl:hidden ${
+//           mobileOpen
+//             ? "translate-x-0"
+//             : "translate-x-full"
+//         }`}
 //       >
-//         {/* =================================================
-//             MOBILE HEADER
-//         ================================================= */}
-
-//         <div
-//           className="
-//             min-h-[76px]
-//             px-4
-//             flex
-//             items-center
-//             justify-between
-//             border-b
-//             border-[#e5eceb]
-//           "
-//         >
+//         {/* MOBILE MENU HEADER */}
+//         <div className="flex min-h-[76px] items-center justify-between border-b border-[#e5eceb] px-4">
 //           <Link
 //             to="/"
 //             onClick={closeMobile}
@@ -2430,11 +2104,7 @@ export default function Header({ onOpenAuth }) {
 //             <img
 //               src="/logo.png"
 //               alt="Akeso Global Medical Services"
-//               className="
-//                 h-[55px]
-//                 w-auto
-//                 object-contain
-//               "
+//               className="h-[55px] w-auto object-contain"
 //             />
 //           </Link>
 
@@ -2442,91 +2112,36 @@ export default function Header({ onOpenAuth }) {
 //             type="button"
 //             onClick={closeMobile}
 //             aria-label="Close menu"
-//             className="
-//               w-10
-//               h-10
-//               rounded-lg
-//               bg-[#edf7f6]
-//               flex
-//               items-center
-//               justify-center
-//               text-[#064B50]
-//               hover:bg-[#dfeeed]
-//               hover:text-[#064B50]
-//               transition-colors
-//             "
+//             className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#edf7f6] text-[#064B50] transition-colors hover:bg-[#dfeeed]"
 //           >
 //             <X size={21} />
 //           </button>
 //         </div>
 
 //         {/* BRAND STRIPE */}
+//         <div className="h-[2px] bg-gradient-to-r from-[#064B50] via-[#C8942E] to-[#C8942E]" />
 
-//         <div
-//           className="
-//             h-[2px]
-//             bg-gradient-to-r
-//             from-[#064B50]
-//             via-[#C8942E]
-//             to-[#C8942E]
-//           "
-//         />
+//         {/* ==================================
+//             MOBILE MENU CONTENT
+//         ================================== */}
 
-//         {/* =================================================
-//             MOBILE CONTENT
-//         ================================================= */}
+//         <div className="h-[calc(100vh-78px)] overflow-y-auto px-5 pb-10">
 
-//         <div
-//           className="
-//             h-[calc(100vh-78px)]
-//             overflow-y-auto
-//             px-5
-//             pb-10
-//           "
-//         >
+//           {/* HOME */}
+//           <Link
+//             to="/"
+//             onClick={closeMobile}
+//             className={mobileLinkClass}
+//           >
+//             <span>Home</span>
 
-//             <Link
-//   to="/"
-//   onClick={closeMobile}
-//   className={`
-//     group
-//     flex
-//     items-center
-//     justify-between
-//     py-[14px]
-//     border-b
-//     border-[#e5eceb]
-//     text-[15px]
-//     font-medium
-//     transition-colors
-//     duration-200
+//             <ChevronRight
+//               size={16}
+//               className="text-[#C8942E]"
+//             />
+//           </Link>
 
-//     ${
-//       location.pathname === "/"
-//         ? "text-[#C8942E]"
-//         : "text-[#064B50] hover:text-[#C8942E]"
-//     }
-//   `}
-// >
-//   <span>Home</span>
-
-//   <ChevronRight
-//     size={16}
-//     className={`
-//       transition-colors
-//       ${
-//         location.pathname === "/"
-//           ? "text-[#C8942E]"
-//           : "text-[#C8942E] group-hover:text-[#C8942E]"
-//       }
-//     `}
-//   />
-// </Link>
-//           {/* ===============================================
-//               SPECIALITY
-//           =============================================== */}
-
-        
+//           {/* SPECIALITY */}
 //           <MobileAccordion
 //             title="Speciality"
 //             mainPath="/specialities"
@@ -2537,7 +2152,7 @@ export default function Header({ onOpenAuth }) {
 //               {specialties
 //                 .slice(0, 6)
 //                 .map((item) => (
-//                  <MobileItem
+//                   <MobileItem
 //                     key={item[1]}
 //                     item={item}
 //                     prefix="speciality"
@@ -2548,47 +2163,25 @@ export default function Header({ onOpenAuth }) {
 //               <Link
 //                 to="/specialities"
 //                 onClick={closeMobile}
-//                 className="
-//                   group
-//                   mt-2
-//                   flex
-//                   items-center
-//                   justify-between
-//                   px-3
-//                   py-[10px]
-//                   rounded-lg
-//                   bg-[#edf7f6]
-//                   text-[#064B50]
-//                   text-[14px]
-//                   font-medium
-//                 "
+//                 className="group mt-2 flex items-center justify-between rounded-lg bg-[#edf7f6] px-3 py-[10px] text-[14px] font-medium text-[#064B50]"
 //               >
-//                 <span>
-//                   View All Specialities
-//                 </span>
+//                 View All Specialities
 
 //                 <ChevronRight
 //                   size={15}
-//                   className="
-//                     text-[#C8942E]
-//                     transition-transform
-//                     group-hover:translate-x-1
-//                   "
+//                   className="text-[#C8942E]"
 //                 />
 //               </Link>
 //             </div>
 //           </MobileAccordion>
 
-//           {/* ===============================================
-//               HEALTH LIBRARY
-//           =============================================== */}
-
+//           {/* HEALTH LIBRARY */}
 //           <MobileAccordion
-//               title="Health Library"
-//               mainPath="/health-library"
-//               active={isActive("/health-library")}
-//               closeMenu={closeMobile}
-//             >
+//             title="Health Library"
+//             mainPath="/health-library"
+//             active={isActive("/health-library")}
+//             closeMenu={closeMobile}
+//           >
 //             <div className="space-y-[2px]">
 //               {healthLibrary.map((item) => {
 //                 const Icon = item?.[2];
@@ -2603,87 +2196,40 @@ export default function Header({ onOpenAuth }) {
 //                             (prev) => !prev
 //                           )
 //                         }
-//                         className="
-//                           group
-//                           w-full
-//                           flex
-//                           items-center
-//                           gap-3
-//                           px-3
-//                           py-[9px]
-//                           rounded-lg
-//                           transition-colors
-//                           hover:bg-[#fff5f8]
-//                         "
+//                         className="group flex w-full items-center gap-3 rounded-lg px-3 py-[9px] transition-colors hover:bg-[#edf7f6]"
 //                       >
-//                         <div
-//                           className="
-//                             w-7
-//                             h-7
-//                             flex
-//                             items-center
-//                             justify-center
-//                             shrink-0
-//                           "
-//                         >
+//                         <div className="flex h-7 w-7 shrink-0 items-center justify-center">
 //                           {Icon && (
 //                             <Icon
 //                               size={17}
-//                               strokeWidth={1.6}
-//                               className="
-//                                 text-[#C8942E]
-//                                 group-hover:text-[#C8942E]
-//                               "
+//                               className="text-[#C8942E]"
 //                             />
 //                           )}
 //                         </div>
 
-//                         <span
-//                           className="
-//                             flex-1
-//                             text-left
-//                             text-[14px]
-//                             font-normal
-//                             text-[#536466]
-//                           "
-//                         >
+//                         <span className="flex-1 text-left text-[14px] text-[#536466]">
 //                           Knowledge Center
 //                         </span>
 
 //                         <ChevronDown
 //                           size={16}
-//                           className={`
-//                             text-[#C8942E]
-//                             transition-transform
-//                             duration-200
-//                             ${
-//                               mobileKnowledgeOpen
-//                                 ? "rotate-180"
-//                                 : ""
-//                             }
-//                           `}
+//                           className={`text-[#C8942E] transition-transform ${
+//                             mobileKnowledgeOpen
+//                               ? "rotate-180"
+//                               : ""
+//                           }`}
 //                         />
 //                       </button>
 
 //                       {mobileKnowledgeOpen && (
-//                         <div
-//                           className="
-//                             ml-6
-//                             mt-1
-//                             pl-3
-//                             border-l
-//                             border-[#C8942E]
-//                           "
-//                         >
+//                         <div className="ml-6 mt-1 border-l border-[#C8942E] pl-3">
 //                           {knowledgeCenter.map(
 //                             (subItem) => (
 //                               <MobileItem
 //                                 key={subItem[1]}
 //                                 item={subItem}
 //                                 prefix="health-library"
-//                                 closeMenu={
-//                                   closeMobile
-//                                 }
+//                                 closeMenu={closeMobile}
 //                               />
 //                             )
 //                           )}
@@ -2699,69 +2245,34 @@ export default function Header({ onOpenAuth }) {
 //                     item={item}
 //                     prefix="health-library"
 //                     closeMenu={closeMobile}
-//                      directPath={true}
+//                     directPath={true}
 //                   />
 //                 );
 //               })}
 //             </div>
 //           </MobileAccordion>
 
-//           {/* ===============================================
-//               OUR DOCTORS
-//           =============================================== */}
-
+//           {/* OUR DOCTORS */}
 //           <button
-//   type="button"
-//   onClick={() => {
-//     closeMobile();
+//             type="button"
+//             onClick={handleDoctorsNavigation}
+//             className={mobileLinkClass}
+//           >
+//             <span>Our Doctors</span>
 
-//     if (isLoggedIn()) {
-//       navigate("/doctors");
-//     } else {
-//       navigate(
-//         `/login?redirect=${encodeURIComponent(
-//           "/doctors"
-//         )}`
-//       );
-//     }
-//   }}
-//   className="
-//     group
-//     w-full
-//     flex
-//     items-center
-//     justify-between
-//     py-[14px]
-//     border-b
-//     border-[#e5eceb]
-//     text-[15px]
-//     font-medium
-//     text-[#064B50]
-//     transition-colors
-//     hover:text-[#C8942E]
-//   "
-// >
-//   <span>Our Doctors</span>
+//             <ChevronRight
+//               size={16}
+//               className="text-[#C8942E]"
+//             />
+//           </button>
 
-//   <ChevronRight
-//     size={16}
-//     className="
-//       text-[#C8942E]
-//       group-hover:text-[#C8942E]
-//     "
-//   />
-// </button>
-//           {/* ===============================================
-//               SERVICES
-//           =============================================== */}
-
-
+//           {/* SERVICES */}
 //           <MobileAccordion
-//               title="Services"
-//               mainPath="/services"
-//               active={isActive("/services")}
-//               closeMenu={closeMobile}
-//             >
+//             title="Services"
+//             mainPath="/services"
+//             active={isActive("/services")}
+//             closeMenu={closeMobile}
+//           >
 //             <div className="space-y-[2px]">
 //               {services.map((item) => (
 //                 <MobileItem
@@ -2775,39 +2286,19 @@ export default function Header({ onOpenAuth }) {
 //               <Link
 //                 to="/services"
 //                 onClick={closeMobile}
-//                 className="
-//                   group
-//                   mt-2
-//                   flex
-//                   items-center
-//                   justify-between
-//                   px-3
-//                   py-[10px]
-//                   rounded-lg
-//                   bg-[#edf7f6]
-//                   text-[#064B50]
-//                   text-[14px]
-//                   font-medium
-//                 "
+//                 className="group mt-2 flex items-center justify-between rounded-lg bg-[#edf7f6] px-3 py-[10px] text-[14px] font-medium text-[#064B50]"
 //               >
-//                 <span>View All Services</span>
+//                 View All Services
 
 //                 <ChevronRight
 //                   size={15}
-//                   className="
-//                     text-[#C8942E]
-//                     transition-transform
-//                     group-hover:translate-x-1
-//                   "
+//                   className="text-[#C8942E]"
 //                 />
 //               </Link>
 //             </div>
 //           </MobileAccordion>
 
-//           {/* ===============================================
-//               INTERNATIONAL PATIENTS
-//           =============================================== */}
-
+//           {/* INTERNATIONAL PATIENTS */}
 //           <MobileAccordion
 //             title="International Patients"
 //             mainPath="/international-patients"
@@ -2826,42 +2317,94 @@ export default function Header({ onOpenAuth }) {
 //             </div>
 //           </MobileAccordion>
 
-//           {/* ===============================================
-//               CONTACT
-//           =============================================== */}
-
+//           {/* CONTACT US */}
 //           <Link
 //             to="/contact"
 //             onClick={closeMobile}
-//             className="
-//               group
-//               flex
-//               items-center
-//               justify-between
-//               py-[14px]
-//               border-b
-//               border-[#e5eceb]
-//               text-[15px]
-//               font-medium
-//               text-[#064B50]
-//               transition-colors
-//               hover:text-[#C8942E]
-//             "
+//             className={mobileLinkClass}
 //           >
 //             <span>Contact Us</span>
 
 //             <ChevronRight
 //               size={16}
-//               className="
-//                 text-[#C8942E]
-//                 group-hover:text-[#C8942E]
-//               "
+//               className="text-[#C8942E]"
 //             />
 //           </Link>
 
-//           {/* ===============================================
-//               MOBILE CALLBACK
-//           =============================================== */}
+//           {/* ==================================
+//               MOBILE / TABLET PROFILE & LOGOUT
+//           ================================== */}
+
+//           {loggedIn ? (
+//             <>
+//               {/* MY PROFILE */}
+//               <button
+//                 type="button"
+//                 onClick={() => {
+//                   closeMobile();
+//                   navigate("/profile");
+//                 }}
+//                 className={mobileLinkClass}
+//               >
+//                 <span className="flex items-center gap-3">
+//                   <UserRound
+//                     size={19}
+//                     className="text-[#C8942E]"
+//                   />
+//                   My Profile
+//                 </span>
+
+//                 <ChevronRight
+//                   size={16}
+//                   className="text-[#C8942E]"
+//                 />
+//               </button>
+
+//               {/* LOGOUT */}
+//               <button
+//                 type="button"
+//                 onClick={handleLogout}
+//                 className={mobileLinkClass}
+//               >
+//                 <span className="flex items-center gap-3">
+//                   <LogOut
+//                     size={19}
+//                     className="text-[#C8942E]"
+//                   />
+//                   Logout
+//                 </span>
+
+//                 <ChevronRight
+//                   size={16}
+//                   className="text-[#C8942E]"
+//                 />
+//               </button>
+//             </>
+//           ) : (
+//             /* LOGIN - WHEN NOT LOGGED IN */
+//             <button
+//               type="button"
+//               onClick={handleLogin}
+//               className={mobileLinkClass}
+//             >
+//               <span className="flex items-center gap-3">
+//                 <LogIn
+//                   size={19}
+//                   className="text-[#C8942E]"
+//                 />
+//                 Login
+//               </span>
+
+//               <ChevronRight
+//                 size={16}
+//                 className="text-[#C8942E]"
+//               />
+//             </button>
+//           )}
+
+//           {/* ==================================
+//               MOBILE REQUEST CALL BACK
+//           ================================== */}
 
 //           <button
 //             type="button"
@@ -2869,28 +2412,7 @@ export default function Header({ onOpenAuth }) {
 //               closeMobile();
 //               setCallbackOpen(true);
 //             }}
-//             className="
-//               mt-6
-//               w-full
-//               min-h-[48px]
-//               rounded-lg
-//               bg-[#064B50]
-//               border
-//               border-[#064B50]
-//               text-white
-//               flex
-//               items-center
-//               justify-center
-//               gap-2
-//               text-[14px]
-//               font-semibold
-//               shadow-[0_6px_18px_rgba(6,75,80,0.16)]
-//               transition-all
-//               duration-200
-
-//               hover:bg-[#0B6B70]
-//               hover:border-[#C8942E]
-//             "
+//             className="mt-6 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg border border-[#064B50] bg-[#064B50] text-[14px] font-semibold text-white shadow-[0_6px_18px_rgba(6,75,80,0.16)] transition-all duration-200 hover:border-[#C8942E] hover:bg-[#0B6B70]"
 //           >
 //             <Phone
 //               size={17}
@@ -2901,49 +2423,17 @@ export default function Header({ onOpenAuth }) {
 //           </button>
 
 //           {/* SMALL DECORATION */}
-
-//           <div
-//             className="
-//               mt-6
-//               flex
-//               items-center
-//               justify-center
-//               gap-2
-//             "
-//           >
-//             <span
-//               className="
-//                 w-8
-//                 h-[1px]
-//                 bg-[#C8942E]
-//               "
-//             />
-
-//             <span
-//               className="
-//                 w-2
-//                 h-2
-//                 rounded-full
-//                 bg-[#C8942E]
-//               "
-//             />
-
-//             <span
-//               className="
-//                 w-8
-//                 h-[1px]
-//                 bg-[#C8942E]
-//               "
-//             />
+//           <div className="mt-6 flex items-center justify-center gap-2">
+//             <span className="h-px w-8 bg-[#C8942E]" />
+//             <span className="h-2 w-2 rounded-full bg-[#C8942E]" />
+//             <span className="h-px w-8 bg-[#C8942E]" />
 //           </div>
 //         </div>
 //       </aside>
 
-
-
-//       {/* ===================================================
-//           REQUEST CALLBACK MODAL
-//       =================================================== */}
+//       {/* ======================================
+//           CALLBACK MODAL
+//       ====================================== */}
 
 //       <CallbackModal
 //         open={callbackOpen}
@@ -2954,20 +2444,5 @@ export default function Header({ onOpenAuth }) {
 //     </>
 //   );
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

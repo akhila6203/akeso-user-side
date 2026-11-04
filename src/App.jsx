@@ -14,6 +14,8 @@ import {
   validateResetToken,
 } from "./services/authService";
 
+import { SiteSettingsProvider } from "./context/SiteSettingsContext";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CallbackModal from "./components/CallbackModal";
@@ -309,16 +311,22 @@ if (
   );
 }
   
-  return (
+  // return (
+  //   <>
+  //     <Header
+  //       onCallback={() =>
+  //         setCallbackOpen(true)
+  //       }
+  //       onOpenAuth={openAuth}
+  //     />
+      return (
+  <SiteSettingsProvider>
     <>
-    
       <Header
-        onCallback={() =>
-          setCallbackOpen(true)
-        }
+        onCallback={() => setCallbackOpen(true)}
         onOpenAuth={openAuth}
       />
-      
+
 
       <Routes>
         <Route
@@ -600,7 +608,9 @@ if (
         onModeChange={setAuthMode}
       />
     </>
-  );
+  </SiteSettingsProvider>
+);
+ 
 }
 
 

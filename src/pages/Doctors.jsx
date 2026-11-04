@@ -1,9 +1,7 @@
-
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
-  ArrowRight,
   CalendarDays,
   Search,
   Stethoscope,
@@ -12,40 +10,92 @@ import {
 } from "lucide-react";
 
 import Breadcrumb from "../components/Breadcrumb";
+import { getDoctors } from "../api/doctorsApi";
+import { mapDoctor } from "../utils/doctorMapper";
+import { getAppointmentLink } from "../data/doctorsData";
 
-import {
-  doctors,
-  getAppointmentLink,
-} from "../data/doctorsData";
 
 export default function Doctors() {
   const [search, setSearch] = useState("");
   const [speciality, setSpeciality] = useState("All");
 
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDoctors() {
+      try {
+        setLoading(true);
+        setLoadError("");
+
+       const response = await getDoctors();
+
+// Supports both Axios response and direct API response
+const result = response?.data ?? response;
+
+const rows = Array.isArray(result?.rows)
+  ? result.rows
+  : Array.isArray(result?.data?.rows)
+  ? result.data.rows
+  : [];
+
+if (!cancelled) {
+  setDoctors(rows.map(mapDoctor));
+}
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(
+            error.message || "Unable to load doctors. Please try again."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadDoctors();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const specialities = useMemo(() => {
     return [
       "All",
       ...Array.from(
-        new Set(doctors.map((doctor) => doctor.speciality))
+        new Set(
+          doctors
+            .map((doctor) => doctor.speciality)
+            .filter(Boolean)
+        )
       ).sort(),
     ];
-  }, []);
+  }, [doctors]);
 
-  const filteredDoctors = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
+ const filteredDoctors = useMemo(() => {
+  const keyword = search.trim().toLowerCase();
 
-    return doctors.filter((doctor) => {
-      const matchesSearch =
-        doctor.name.toLowerCase().includes(keyword) ||
-        doctor.speciality.toLowerCase().includes(keyword);
+  return doctors.filter((doctor) => {
+    const name = String(doctor.name || "").toLowerCase();
+    const specialityName = String(doctor.speciality || "").toLowerCase();
 
-      const matchesSpeciality =
-        speciality === "All" ||
-        doctor.speciality === speciality;
+    const matchesSearch =
+      name.includes(keyword) ||
+      specialityName.includes(keyword);
 
-      return matchesSearch && matchesSpeciality;
-    });
-  }, [search, speciality]);
+    const matchesSpeciality =
+      speciality === "All" ||
+      doctor.speciality === speciality;
+
+    return matchesSearch && matchesSpeciality;
+  });
+}, [doctors, search, speciality]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -124,7 +174,29 @@ export default function Doctors() {
             </select>
           </div>
 
-          {/* RESULTS */}
+{loading && (
+  <div className="mt-10 py-12 text-center text-[15px] text-[#52696A]">
+    Loading doctors...
+  </div>
+)}
+
+{!loading && loadError && (
+  <div className="mt-8 rounded-[20px] border border-[#DCE8E6] bg-[#F7FAF9] px-5 py-12 text-center">
+    <p className="text-[15px] text-[#52696A]">
+      {loadError}
+    </p>
+
+    <button
+      type="button"
+      onClick={() => window.location.reload()}
+      className="mt-4 rounded-lg bg-[#064B50] px-5 py-2 text-[14px] font-semibold text-white"
+    >
+      Retry
+    </button>
+  </div>
+)}
+
+                    {/* RESULTS */}
           <div className="mt-6 flex items-center justify-between gap-3">
             <p className="text-[14px] text-[#52696A]">
               Showing{" "}
@@ -149,30 +221,32 @@ export default function Doctors() {
           </div>
 
           {/* DOCTORS GRID */}
-          {filteredDoctors.length ? (
-            <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredDoctors.map((doctor) => (
-                <DoctorCard
-                  key={doctor.id}
-                  doctor={doctor}
+          {!loading && !loadError && (
+            filteredDoctors.length > 0 ? (
+              <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredDoctors.map((doctor) => (
+                  <DoctorCard
+                    key={doctor.id}
+                    doctor={doctor}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-8 rounded-[20px] border border-[#DCE8E6] bg-[#F7FAF9] px-5 py-16 text-center">
+                <UserRound
+                  size={42}
+                  className="mx-auto text-[#A5BCB9]"
                 />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-8 rounded-[20px] border border-[#DCE8E6] bg-[#F7FAF9] px-5 py-16 text-center">
-              <UserRound
-                size={42}
-                className="mx-auto text-[#A5BCB9]"
-              />
 
-              <h3 className="mt-4 text-[20px] font-semibold text-[#064B50]">
-                No doctors found
-              </h3>
+                <h3 className="mt-4 text-[20px] font-semibold text-[#064B50]">
+                  No doctors found
+                </h3>
 
-              <p className="mt-2 text-[14px] text-[#52696A]">
-                Try searching with another name or speciality.
-              </p>
-            </div>
+                <p className="mt-2 text-[14px] text-[#52696A]">
+                  Try searching with another name or speciality.
+                </p>
+              </div>
+            )
           )}
         </div>
       </section>
@@ -188,17 +262,15 @@ function DoctorCard({ doctor }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-[#DCE8E6] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#C8942E]/50 hover:shadow-[0_16px_38px_rgba(6,75,80,0.10)]">
 
-      {/* DOCTOR IMAGE - NO FEATURED BADGE */}
-      <div className="overflow-hidden bg-[#EEF6F5]">
-        <img
-          src={doctor.image}
-          alt={`Illustration for ${doctor.name}`}
-          loading="lazy"
-          className="h-[245px] w-full object-contain transition-transform duration-500 group-hover:scale-[1.03] sm:h-[260px] lg:h-[270px]"
-        />
-      </div>
+      <div className="h-[245px] w-full overflow-hidden bg-[#EEF6F5] sm:h-[260px] lg:h-[270px]">
+  <img
+    src={doctor.image}
+    alt={`Illustration for ${doctor.name}`}
+    loading="lazy"
+    className="block h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+  />
+</div>
 
-      {/* CONTENT */}
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         <h2 className="min-h-[52px] text-[18px] font-semibold leading-[1.5] text-[#064B50] sm:text-[19px]">
           {doctor.name}
@@ -215,9 +287,7 @@ function DoctorCard({ doctor }) {
         <div className="mt-auto pt-6">
           <div className="h-px bg-[#E5EFED]" />
 
-        
           <div className="mt-4 flex w-full gap-2">
-
             <Link
               to={`/doctors/${doctor.id}`}
               title="Know More"
@@ -232,13 +302,9 @@ function DoctorCard({ doctor }) {
               rel="noopener noreferrer"
               className="flex min-h-[40px] min-w-0 flex-[66_1_0%] items-center justify-center gap-2 rounded-lg bg-[#C8942E] px-2 py-2 text-center text-[12px] font-semibold leading-tight text-white transition hover:bg-[#A9781F] sm:text-[13px]"
             >
-              <CalendarDays
-                size={15}
-                className="shrink-0"
-              />
+              <CalendarDays size={15} className="shrink-0" />
               <span>Book Appointment</span>
             </a>
-
           </div>
         </div>
       </div>

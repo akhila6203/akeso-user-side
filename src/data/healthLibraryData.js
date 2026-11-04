@@ -7,6 +7,22 @@ import specialitiesImage from "../assets/patient-support/support-specialities.jp
 import treatmentsImage from "../assets/patient-support/support-treatments.jpg";
 import ailmentsImage from "../assets/patient-support/support-ailments.jpg";
 
+// Health Library images
+import symptomsImage from "../assets/health-library/symptoms.jpg";
+import causesImage from "../assets/health-library/causes.jpg";
+import risksImage from "../assets/health-library/risks.jpg";
+import preventionImage from "../assets/health-library/prevention.jpg";
+import symptomsImage1 from "../assets/health-library/symptoms1.jpg";
+
+import ctImage from "../assets/health-library/ct.jpg";
+import roboticSurgeryImage from "../assets/health-library/robotic-surgery.jpg";
+import imageGuidedImage from "../assets/health-library/image-guided.jpg";
+
+// Condition images
+import migraineImage from "../assets/health-library/hl4.jpg";
+
+// Default condition image
+import defaultConditionImage from "../assets/health-library/hl1.jpg";
 
 export const slugifyHealth = (value = "") =>
   value
@@ -26,134 +42,134 @@ const diseaseNames = [
   "Voice Box Tumours",
   "Urinary Incontinence",
   "Ulcer",
-  "Trigger Finger",
+  // "Trigger Finger",
   "Traumatic Crush Injuries",
   "Tracheal Cancer",
   "Tongue Cancer",
-  "Trigeminal Neuralgia",
-  "Traumatic Brain Injury",
-  "Tourette Syndrome",
+  // "Trigeminal Neuralgia",
+  // "Traumatic Brain Injury",
+  // "Tourette Syndrome",
 
   "Severe Bone Fracture",
   "Scabies",
   "Skin Allergies",
-  "Severe Burns",
-  "Skull Base Tumor",
-  "Rosacea",
-  "Road Accidents",
-  "Rheumatic Heart Disease",
-  "Renal Tubular Acidosis",
-  "Rheumatoid Arthritis",
+  // "Severe Burns",
+  // "Skull Base Tumor",
+  // "Rosacea",
+  // "Road Accidents",
+  // "Rheumatic Heart Disease",
+  // "Renal Tubular Acidosis",
+  // "Rheumatoid Arthritis",
 
   "Paget’s Disease",
   "Panfacial Fractures",
-  "Prolapsed Intervertebral Disc",
-  "Pilonidal Sinus",
-  "Pimple",
-  "Pharyngeal Cancer",
-  "Parkinson’s Disease",
+  // "Prolapsed Intervertebral Disc",
+  // "Pilonidal Sinus",
+  // "Pimple",
+  // "Pharyngeal Cancer",
+  // "Parkinson’s Disease",
   "Peritonitis",
   "Osteoarthritis",
   "Osteoporosis",
 
-  "Obsessive Compulsive Disorder",
-  "Nasal Polyps",
+  // "Obsessive Compulsive Disorder",
+  // "Nasal Polyps",
   "Nephrotic Syndrome",
   "Nerve Injury",
-  "Maxillary and Mandibular Fractures",
-  "Maxillary Sinusitis",
-  "Marfan Syndrome",
-  "Melanoma",
-  "Meningioma",
-  "Multiple Sclerosis",
+  // "Maxillary and Mandibular Fractures",
+  // "Maxillary Sinusitis",
+  // "Marfan Syndrome",
+  // "Melanoma",
+  // "Meningioma",
+  // "Multiple Sclerosis",
 
   "Migraine",
   "Moebius Syndrome",
-  "Myositis",
-  "Lung Cancer",
-  "Lipoma",
-  "Large Ductal Carcinoma",
-  "Lip Cancer",
-  "Laryngeal Cancer",
-  "Lumbar Canal Stenosis",
-  "Knee Fractures & Injuries",
+  // "Myositis",
+  // "Lung Cancer",
+  // "Lipoma",
+  // "Large Ductal Carcinoma",
+  // "Lip Cancer",
+  // "Laryngeal Cancer",
+  // "Lumbar Canal Stenosis",
+  // "Knee Fractures & Injuries",
 
-  "Kidney Cancer",
-  "Keratoconus",
+  // "Kidney Cancer",
+  // "Keratoconus",
   "Jaundice",
   "Impetigo",
   "Interstitial Cystitis",
-  "Intradural Spinal Tumour",
-  "Irritable Bowel Syndrome",
-  "Internal Hemorrhoidal Prolapse",
-  "Immunodeficiency Disorder",
-  "Hip Fracture",
+  // "Intradural Spinal Tumour",
+  // "Irritable Bowel Syndrome",
+  // "Internal Hemorrhoidal Prolapse",
+  // "Immunodeficiency Disorder",
+  // "Hip Fracture",
 
-  "Heart Failure",
-  "Hypertension",
-  "Horseshoe Kidney",
+  // "Heart Failure",
+  // "Hypertension",
+  // "Horseshoe Kidney",
   "Hydronephrosis",
   "Head and Neck Cancer",
-  "Huntington's Disease",
-  "Hemifacial Spasm",
-  "Hydrocephalus",
-  "Hepatitis C",
-  "Hernia",
+  // "Huntington's Disease",
+  // "Hemifacial Spasm",
+  // "Hydrocephalus",
+  // "Hepatitis C",
+  // "Hernia",
 
-  "Gynecomastia",
-  "Glomerular Disease",
-  "Glioblastoma (GBM)",
-  "Gestational Diabetes",
-  "Goodpasture Syndrome",
+  // "Gynecomastia",
+  // "Glomerular Disease",
+  // "Glioblastoma (GBM)",
+  // "Gestational Diabetes",
+  // "Goodpasture Syndrome",
   "Frozen Shoulder",
   "Fibromyalgia",
-  "Flatfeet",
-  "Fibrocystic Disease",
-  "Extensive Wound or Trauma",
+  // "Flatfeet",
+  // "Fibrocystic Disease",
+  // "Extensive Wound or Trauma",
 
   "Eardrum Perforation",
   "Ewing’s Sarcoma",
-  "Extradural Spinal Tumour",
+  // "Extradural Spinal Tumour",
   "Disc Prolapse",
   "Dystonia",
-  "Dental Malocclusions",
-  "Deviated Nasal Septum",
-  "Diabetic Kidney Disease",
-  "Dysphagia",
-  "Dawson Disease",
+  // "Dental Malocclusions",
+  // "Deviated Nasal Septum",
+  // "Diabetic Kidney Disease",
+  // "Dysphagia",
+  // "Dawson Disease",
 
   "Dyspepsia (Indigestion, Upset Stomach)",
   "Carcinoma Lung",
   "Chronic Otitis Media",
   "Coronary Artery Disease",
-  "Carcinoma Prostate",
-  "Carcinoma Pancreas",
-  "Carcinoma Buccal Mucosa",
-  "Carcinoma Larynx",
-  "Carcinoma Tonsil",
-  "Cerebral Aneurysm",
+  // "Carcinoma Prostate",
+  // "Carcinoma Pancreas",
+  // "Carcinoma Buccal Mucosa",
+  // "Carcinoma Larynx",
+  // "Carcinoma Tonsil",
+  // "Cerebral Aneurysm",
 
   "CSF Rhinorrhea",
   "Craniosynostosis",
   "Carcinoma Esophagus",
-  "Cholecystitis",
-  "Carcinoma Rectum",
-  "Cushing Syndrome",
-  "Bartter Syndrome",
-  "Bladder Pain Syndrome",
-  "Brain Metastasis",
-  "Bloody Nipple Discharge",
+  // "Cholecystitis",
+  // "Carcinoma Rectum",
+  // "Cushing Syndrome",
+  // "Bartter Syndrome",
+  // "Bladder Pain Syndrome",
+  // "Brain Metastasis",
+  // "Bloody Nipple Discharge",
 
   "Bowen’s Disease",
   "Brain Cancer",
-  "Biliary Atresia",
+  // "Biliary Atresia",
   "Biliary Disease",
-  "Androgenetic Alopecia or Pattern Baldness",
+  // "Androgenetic Alopecia or Pattern Baldness",
   "Allergic Rhinitis",
   "Asperger’s Disease",
-  "Acute Kidney Injury",
-  "Acute Myeloid Leukemia",
-  "Acquired Brain Injury",
+  // "Acute Kidney Injury",
+  // "Acute Myeloid Leukemia",
+  // "Acquired Brain Injury",
 
   "Agnosia",
   "Anxiety",
@@ -230,13 +246,25 @@ function getCategory(name) {
 }
 
 
-export const healthConditions = diseaseNames.map((name) => ({
-  name,
-  slug: slugifyHealth(name),
-  category: getCategory(name),
-}));
+// export const healthConditions = diseaseNames.map((name) => ({
+//   name,
+//   slug: slugifyHealth(name),
+//   category: getCategory(name),
+// }));
+export const healthConditions = diseaseNames.map((name) => {
+  const slug = slugifyHealth(name);
 
+  const conditionImages = {
+    migraine: migraineImage,
+  };
 
+  return {
+    name,
+    slug,
+    category: getCategory(name),
+    image: conditionImages[slug] || defaultConditionImage,
+  };
+});
 /* =========================================================
    FEATURED / MOST SEARCHED
 ========================================================= */
@@ -274,8 +302,7 @@ export const healthConditionDetails = {
   "pagets-disease": {
     title: "Paget’s Disease",
 
-    image:
-      "/images/health-library/pagets-disease.jpg",
+      image: defaultConditionImage,
 
     about:
       "Paget’s disease is a long-term disorder involving abnormal bone remodelling. The affected bone can become enlarged, structurally altered and more vulnerable to complications. Clinical evaluation may include symptoms, examination, blood tests and imaging.",
@@ -284,7 +311,7 @@ export const healthConditionDetails = {
       symptoms: {
         title: "Symptoms",
         image:
-          "/images/health-library/symptoms.jpg",
+          symptomsImage1,
 
         content:
           "Some people may have no noticeable symptoms. When symptoms occur, they can vary depending on which bones are affected.",
@@ -299,8 +326,7 @@ export const healthConditionDetails = {
 
       causes: {
         title: "Causes",
-        image:
-          "/images/health-library/causes.jpg",
+        image: causesImage,
 
         content:
           "The exact cause is not fully established. Genetic and environmental factors may contribute in some patients.",
@@ -314,8 +340,8 @@ export const healthConditionDetails = {
 
       risks: {
         title: "Risks",
-        image:
-          "/images/health-library/risks.jpg",
+       
+          image: risksImage,
 
         content:
           "Certain factors may be associated with a greater likelihood of developing Paget’s disease.",
@@ -329,8 +355,7 @@ export const healthConditionDetails = {
 
       prevention: {
         title: "Prevention",
-        image:
-          "/images/health-library/prevention.jpg",
+       image: preventionImage,
 
         content:
           "There is no guaranteed way to prevent the condition, but appropriate medical follow-up can help reduce complications.",
@@ -374,15 +399,14 @@ export function getHealthCondition(slug) {
     title: condition.name,
 
     image:
-      "/images/health-library/default-condition.jpg",
+      symptomsImage1,
 
     about: `${condition.name} requires an individual clinical assessment to understand symptoms, possible contributing factors, diagnosis and appropriate management. Evaluation and treatment depend on the patient's medical history, examination and specialist recommendations.`,
 
     sections: {
       symptoms: {
         title: "Symptoms",
-        image:
-          "/images/health-library/symptoms.jpg",
+         image: symptomsImage,
 
         content: `Symptoms associated with ${condition.name} can differ between patients and may vary according to severity and the part of the body affected.`,
 
@@ -396,8 +420,7 @@ export function getHealthCondition(slug) {
 
       causes: {
         title: "Causes",
-        image:
-          "/images/health-library/causes.jpg",
+        image: causesImage,
 
         content: `The causes or contributing factors associated with ${condition.name} depend on the condition and the individual patient.`,
 
@@ -411,8 +434,7 @@ export function getHealthCondition(slug) {
 
       risks: {
         title: "Risks",
-        image:
-          "/images/health-library/risks.jpg",
+        image: risksImage,
 
         content: `Risk factors for ${condition.name} vary and should be interpreted together with the patient's medical history.`,
 
@@ -427,7 +449,7 @@ export function getHealthCondition(slug) {
       prevention: {
         title: "Prevention",
         image:
-          "/images/health-library/prevention.jpg",
+          preventionImage,
 
         content: `Prevention and risk-reduction strategies for ${condition.name} depend on the underlying condition and individual health needs.`,
 
@@ -587,8 +609,7 @@ export const healthTechnologies = [
     title: "Advanced CT Imaging",
     description:
       "Advanced imaging may support detailed diagnostic assessment and treatment planning.",
-    image:
-      "/images/technologies/ct.jpg",
+    image: ctImage,
   },
 
   {
@@ -603,8 +624,7 @@ export const healthTechnologies = [
     title: "Robotic Surgery",
     description:
       "Robotic-assisted platforms may support selected minimally invasive procedures.",
-    image:
-      "/images/technologies/robotic-surgery.jpg",
+    image: roboticSurgeryImage,
   },
 
   {
@@ -612,8 +632,7 @@ export const healthTechnologies = [
       "Image-Guided Treatment",
     description:
       "Image-guided systems may support precision during selected procedures.",
-    image:
-      "/images/technologies/image-guided.jpg",
+    image: imageGuidedImage,
   },
 
   {

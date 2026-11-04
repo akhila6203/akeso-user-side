@@ -10,6 +10,7 @@ import FounderWords from "../components/home/FounderWords";
 import BecomePartner from "../components/home/BecomePartner";
 import WhyAkesoIndia from "../components/home/WhyAkesoIndia";
 
+// import HomeAccreditations from "../components/home/HomeAccreditations";
 import HomeAccreditations from "../components/home/HomeAccreditations";
 
 export default function Home({
@@ -34,8 +35,8 @@ export default function Home({
       <PostOpWellness />
 
       <FounderWords />
-      <HomeAccreditations />
-
+     
+<HomeAccreditations />
       <BecomePartner />
     </>
   );

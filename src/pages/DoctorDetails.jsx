@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import {
@@ -15,18 +14,108 @@ import {
 } from "lucide-react";
 
 import Breadcrumb from "../components/Breadcrumb";
-
-import {
-  doctors,
-  getDoctorById,
-  getAppointmentLink,
-} from "../data/doctorsData";
+import { getDoctors, getDoctorById } from "../api/doctorsApi";
+import { mapDoctor } from "../utils/doctorMapper";
+import { getAppointmentLink } from "../data/doctorsData";
 
 export default function DoctorDetails() {
   const { id } = useParams();
-  const doctor = getDoctorById(id);
 
+  const [doctor, setDoctor] = useState(null);
+  const [relatedDoctors, setRelatedDoctors] = useState([]);
   const [activeTab, setActiveTab] = useState("expertise");
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDoctor() {
+      try {
+        setLoading(true);
+        setLoadError("");
+
+        const [doctorResponse, doctorsResponse] = await Promise.all([
+          getDoctorById(id),
+          getDoctors(),
+        ]);
+
+       const doctorResult = doctorResponse?.data ?? doctorResponse;
+const doctorsResult = doctorsResponse?.data ?? doctorsResponse;
+
+const currentDoctor =
+  doctorResult?.data ?? doctorResult?.doctor ?? doctorResult;
+
+if (!currentDoctor || !currentDoctor.id) {
+  throw new Error("Doctor not found");
+}
+
+const mappedDoctor = mapDoctor(currentDoctor);
+
+const doctorRows = Array.isArray(doctorsResult?.rows)
+  ? doctorsResult.rows
+  : Array.isArray(doctorsResult?.data?.rows)
+  ? doctorsResult.data.rows
+  : [];
+
+const allDoctors = doctorRows.map(mapDoctor);
+
+        if (!cancelled) {
+          setDoctor(mappedDoctor);
+
+          setRelatedDoctors(
+            allDoctors
+              .filter(
+                (item) =>
+                  item.id !== mappedDoctor.id &&
+                  item.speciality === mappedDoctor.speciality
+              )
+              .slice(0, 3)
+          );
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(error.message || "Unable to load doctor details");
+          setDoctor(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadDoctor();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <main className="flex min-h-[60vh] items-center justify-center text-[15px] text-[#52696A]">
+        Loading doctor details...
+      </main>
+    );
+  }
+
+  if (loadError || !doctor) {
+    return (
+      <main className="flex min-h-[60vh] flex-col items-center justify-center px-5 text-center">
+        <h1 className="text-[28px] font-semibold text-[#064B50]">
+          {loadError || "Doctor Not Found"}
+        </h1>
+
+        <Link
+          to="/doctors"
+          className="mt-6 rounded-lg bg-[#064B50] px-6 py-3 text-white"
+        >
+          Back to Doctors
+        </Link>
+      </main>
+    );
+  }
 
   if (!doctor) {
     return (
@@ -68,13 +157,7 @@ export default function DoctorDetails() {
     },
   ];
 
-  const relatedDoctors = doctors
-    .filter(
-      (item) =>
-        item.id !== doctor.id &&
-        item.speciality === doctor.speciality
-    )
-    .slice(0, 3);
+
 
   const renderTabContent = () => {
     if (activeTab === "expertise") {
@@ -95,18 +178,30 @@ export default function DoctorDetails() {
 
     if (activeTab === "experience") {
       return (
-        <p className="text-[15px] leading-8 text-[#52696A]">
+        <p className="text-[18px] leading-8 text-[#52696A]">
           {doctor.experience ||
             "Experience details pending verification."}
         </p>
       );
     }
 
-    return (
-      <InfoList
-        items={doctor.academicAchievements}
-      />
-    );
+    // return (
+    //   <InfoList
+    //     items={doctor.academicAchievements}
+    //   />
+    // );
+    return doctor.academicAchievements ? (
+  <div
+    className="doctor-rich-content text-[16px] leading-8 text-[#52696A]"
+    dangerouslySetInnerHTML={{
+      __html: doctor.academicAchievements,
+    }}
+  />
+) : (
+  <p className="text-[16px] text-[#52696A]">
+    Information pending verification.
+  </p>
+);
   };
 
   return (
@@ -130,24 +225,27 @@ export default function DoctorDetails() {
 
           <Link
             to="/doctors"
-            className="mb-7 inline-flex items-center gap-2 text-[14px] font-semibold text-[#064B50] hover:text-[#C8942E]"
+            className="mb-7 inline-flex items-center gap-2 text-[16px] font-semibold text-[#064B50] hover:text-[#C8942E]"
           >
             <ArrowLeft size={17} />
             Back to Doctors
           </Link>
 
           {/* DOCTOR PROFILE */}
-          <div className="grid overflow-hidden rounded-[24px] border border-[#DCE8E6] bg-white shadow-[0_12px_40px_rgba(6,75,80,0.06)] md:grid-cols-[0.85fr_1.15fr]">
+          {/* <div className="grid overflow-hidden rounded-[24px] border border-[#DCE8E6] bg-white shadow-[0_12px_40px_rgba(6,75,80,0.06)] md:grid-cols-[0.85fr_1.15fr]"> */}
+          <div className="grid grid-cols-1 items-stretch gap-8 md:grid-cols-[0.85fr_1.15fr] md:gap-12">
 
-            <div className="flex items-center justify-center bg-[#EEF6F5] p-5 sm:p-8">
+           
+            <div className="relative min-h-[350px] overflow-hidden rounded-xl bg-[#EEF6F5] sm:min-h-[450px] md:min-h-[520px]">
               <img
                 src={doctor.image}
                 alt={`Illustration for ${doctor.name}`}
-                className="max-h-[390px] w-full object-contain"
+                className="absolute inset-0 h-full w-full object-cover object-center"
               />
             </div>
 
-            <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-12">
+            {/* <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-12"> */}
+            <div className="flex flex-col justify-center py-2 md:py-6">
 
               <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-[#EEF6F5] px-4 py-2 text-[12px] font-semibold text-[#064B50]">
                 <Stethoscope size={15} />
@@ -163,9 +261,10 @@ export default function DoctorDetails() {
               </p>
 
               {doctor.about && (
-                <p className="mt-5 text-[15px] leading-8 text-[#52696A]">
-                  {doctor.about}
-                </p>
+                <div
+                  className="doctor-rich-content mt-5 text-[16px] leading-8 text-[#52696A]"
+                  dangerouslySetInnerHTML={{ __html: doctor.about }}
+                />
               )}
 
               <div className="mt-7 space-y-3">
@@ -194,13 +293,13 @@ export default function DoctorDetails() {
                   />
                 )}
 
-                {doctor.qualifications?.length > 0 && (
+                {/* {doctor.qualifications?.length > 0 && (
                   <DetailLine
                     icon={GraduationCap}
                     label="Qualifications"
                     value={doctor.qualifications.join(", ")}
                   />
-                )}
+                )} */}
               </div>
 
               {/* PROFILE BUTTONS */}
@@ -241,7 +340,7 @@ export default function DoctorDetails() {
                     onClick={() =>
                       setActiveTab(tab.id)
                     }
-                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-3 text-[12px] font-semibold transition sm:text-[14px] ${
+                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-3 text-[12px] font-semibold transition sm:text-[16px] ${
                       activeTab === tab.id
                         ? "bg-[#064B50] text-white"
                         : "bg-white text-[#064B50] hover:bg-[#E6F1EF]"
@@ -254,7 +353,7 @@ export default function DoctorDetails() {
               })}
             </div>
 
-            <div className="min-h-[180px] p-6 text-[15px] leading-8 text-[#52696A] sm:p-8">
+            <div className="min-h-[180px] p-6 text-[16px] leading-8 text-[#52696A] sm:p-8">
               {renderTabContent()}
             </div>
 
@@ -268,7 +367,7 @@ export default function DoctorDetails() {
                 Related Doctors
               </h2>
 
-              <p className="mt-2 text-[15px] text-[#52696A]">
+              <p className="mt-2 text-[16px] text-[#52696A]">
                 Explore other doctors in the same speciality.
               </p>
 
@@ -280,19 +379,18 @@ export default function DoctorDetails() {
                     className="flex flex-col overflow-hidden rounded-[20px] border border-[#DCE8E6] bg-white"
                   >
 
-                    <img
+                   <img
                       src={item.image}
                       alt={`Illustration for ${item.name}`}
-                      className="h-[220px] w-full bg-[#EEF6F5] object-contain"
+                      className="h-[220px] w-full bg-[#EEF6F5] object-cover object-center"
                     />
-
                     <div className="flex flex-1 flex-col p-5">
 
                       <h3 className="text-[18px] font-semibold text-[#064B50]">
                         {item.name}
                       </h3>
 
-                      <p className="mt-2 text-[14px] text-[#52696A]">
+                      <p className="mt-2 text-[16px] text-[#52696A]">
                         {item.speciality}
                       </p>
 
@@ -300,7 +398,7 @@ export default function DoctorDetails() {
 
                         <Link
                           to={`/doctors/${item.id}`}
-                          className="flex min-h-[44px] min-w-0 flex-[1_1_25%] items-center justify-center rounded-lg bg-[#064B50] px-1 text-center text-[10px] font-semibold text-white"
+                          className="flex min-h-[44px] min-w-0 flex-[1_1_25%] items-center justify-center rounded-lg bg-[#064B50] px-1 text-center text-[14px] font-semibold text-white"
                         >
                           Know More
                         </Link>
@@ -309,7 +407,7 @@ export default function DoctorDetails() {
                           href={getAppointmentLink()}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex min-h-[44px] min-w-0 flex-[3_1_75%] items-center justify-center gap-1 rounded-lg bg-[#C8942E] px-2 text-center text-[12px] font-semibold text-white"
+                          className="flex min-h-[44px] min-w-0 flex-[3_1_75%] items-center justify-center gap-1 rounded-lg bg-[#C8942E] px-2 text-center text-[14px] font-semibold text-white"
                         >
                           <CalendarDays size={14} />
                           Book Appointment
@@ -339,7 +437,7 @@ function DetailLine({
   value,
 }) {
   return (
-    <div className="flex items-start gap-3 text-[14px] text-[#52696A]">
+    <div className="flex items-start gap-3 text-[16px] text-[#52696A]">
       <Icon
         size={18}
         className="mt-1 shrink-0 text-[#C8942E]"
@@ -362,7 +460,7 @@ function DetailLine({
 function InfoList({ items = [] }) {
   if (!items.length) {
     return (
-      <p className="text-[15px] text-[#52696A]">
+      <p className="text-[16px] text-[#52696A]">
         Information pending verification.
       </p>
     );
@@ -385,3 +483,6 @@ function InfoList({ items = [] }) {
     </ul>
   );
 }
+
+
+

@@ -20,7 +20,7 @@ export default function AkesoResearch() {
         lg:py-20
       "
     >
-      <div
+     <div
         className="
           mx-auto
           max-w-[1300px]
@@ -30,6 +30,7 @@ export default function AkesoResearch() {
           lg:px-10
         "
       >
+
 
         {/* HEADING */}
 
@@ -46,7 +47,7 @@ export default function AkesoResearch() {
             Knowledge & Innovation
           </span>
 
-          <h2
+         <h2
             className="
               mt-3
               text-[30px]
@@ -97,16 +98,16 @@ export default function AkesoResearch() {
               "
             /> */}
             <img
-  src={researchImage}
-  alt="Medical Research and Healthcare Innovation"
-  className="h-full w-full object-cover"
-/>
+              src={researchImage}
+              alt="Medical Research and Healthcare Innovation"
+              className="h-full w-full object-cover"
+            />
           </div>
 
 
           {/* MATTER */}
 
-          <div
+         <div
             className="
               flex
               flex-col
@@ -117,14 +118,14 @@ export default function AkesoResearch() {
               lg:p-12
             "
           >
-            <h3
+           <h3
               className="
-                text-[28px]
+                text-[25px]
                 font-semibold
                 leading-tight
                 text-[#064B50]
 
-                sm:text-[34px]
+                sm:text-[30px]
               "
             >
               Research, Knowledge &
@@ -134,9 +135,9 @@ export default function AkesoResearch() {
             <p
               className="
                 mt-5
-                text-[18px]
+                text-[16px]
                 leading-8
-                text-[#272828]
+                text-black
               "
             >
               Explore healthcare
@@ -149,7 +150,7 @@ export default function AkesoResearch() {
               technologies.
             </p>
 
-            <Link
+           <Link
               to="/research"
               className="
                 mt-7

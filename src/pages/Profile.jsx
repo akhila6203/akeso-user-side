@@ -1,107 +1,46 @@
 
-
 import { patientCare } from "../api/patientCare";
-
-
-
 import { useEffect, useMemo, useRef, useState } from "react";
-
 import {
-
   Activity, Bell, Building2, CalendarDays, Check,
-
   CheckCircle2, ChevronRight, ClipboardList, CreditCard,
-
   Download, Eye, FileText, HeartPulse, Hotel, IdCard,
-
   LayoutDashboard, LockKeyhole, Menu, MessageCircle,
-
   Pencil, Plane, Plus, Save, ShieldCheck, Stethoscope,
-
   Trash2, Upload, UserRound, Wallet, X, ArrowLeft,
-
   Headphones, AlertCircle
-
 } from "lucide-react";
 
 import { getUser } from "../utils/auth";
 
-
-
-
-
-
-
 const STORAGE_PREFIX = "akeso_patient_profile_demo_v4";
-
-
-
 function getPatientKey(user) {
-
   const identity = String(
-
     user?.id ?? user?.customer_id ?? user?.email ?? ""
-
   ).trim().toLowerCase();
-
-
-
   return identity ? `${STORAGE_PREFIX}_${identity}` : null;
-
 }
-
-
 
 function getOrCreatePatientId(storageKey) {
-
   if (!storageKey) return "";
-
-
-
   const key = `${storageKey}_registration_number`;
-
-
-
   let registrationNumber = localStorage.getItem(key);
-
-
-
   if (!registrationNumber) {
-
     const uniquePart = crypto.randomUUID()
-
       .replace(/-/g, "")
-
       .slice(0, 12)
-
       .toUpperCase();
-
-
-
     registrationNumber = `AKESO-${uniquePart}`;
-
     localStorage.setItem(key, registrationNumber);
-
   }
-
-
-
   return registrationNumber;
-
 }
 
-
-
 const theme = {
-
   primary: "#064B50",
-
   gold: "#C8942E",
-
   text: "#263F41",
-
 };
-
 
 const NAV = [
   // Patient can add/edit their own information
@@ -120,319 +59,163 @@ const NAV = [
   { id: "appointments", label: "Appointments", icon: CalendarDays },
 ];
 
-
-
 const FIELDS = {
-
   personal: [
-
     ["fullName", "Full legal name (as per passport)"],
-
     ["dob", "Date of birth", "date"],
-
     ["gender", "Gender", "select", ["Male", "Female", "Other", "Prefer not to say"]],
-
     ["phone", "Contact number with country code", "tel"],
-
     ["email", "Email address", "email"],
-
     ["address", "Residential address", "textarea"],
-
     ["emergencyName", "Emergency contact name"],
-
     ["emergencyRelation", "Emergency contact relationship"],
-
     ["emergencyPhone", "Emergency contact phone", "tel"],
-
   ],
-
   passport: [
-
     ["passportNumber", "Passport number"],
-
     ["citizenship", "Country of citizenship / origin"],
-
     ["nationality", "Nationality"],
-
     ["residence", "Country of residence"],
-
     ["passportIssue", "Passport issue date", "date"],
-
     ["passportExpiry", "Passport expiry date", "date"],
-
   ],
-
-  visa: [
-
-  ["visaType", "Visa type / category"],
-
-  ["visaStatus", "Visa application status", "select", [
-
-    "Not Started",
-
-    "In Progress",
-
-    "Submitted",
-
-    "Approved",
-
-    "Rejected",
-
-  ]],
-
-  ["visaReference", "Application / reference number"],
-
-  ["visaApplicationDate", "Application date", "date"],
-
-  ["visaApprovalDate", "Approval date", "date"],
-
-  ["visaValidity", "Visa validity"],
-
-  ["visaExpiry", "Visa expiry date", "date"],
-
-
-
-  ["medicalVisaType", "Medical visa / medical attendant visa type"],
-
-  ["medicalVisaNumber", "Medical visa / attendant visa number"],
-
-  ["attendantName", "Medical attendant full name"],
-
-  ["attendantRelationship", "Relationship with patient"],
-
-  ["attendantPassport", "Medical attendant passport number"],
-
-  ["attendantVisa", "Medical visa / medical attendant visa details", "textarea"],
-
-],
-
- medical: [
-
+  medical: [
   ["condition", "Primary medical condition"],
-
   ["diagnosis", "Primary diagnosis", "textarea"],
-
   ["medicalHistory", "Previous medical history", "textarea"],
-
   ["existingConditions", "Existing medical conditions", "textarea"],
-
   ["previousSurgeries", "Previous surgeries and treatments", "textarea"],
-
   ["medications", "Current medications", "textarea"],
-
   ["allergies", "Known allergies", "textarea"],
-
-
-
   ["labReportsSummary", "Relevant laboratory reports summary", "textarea"],
-
   ["scanSummary", "Scans and diagnostic records summary", "textarea"],
-
   ["diagnosticHistory", "Previous diagnostic findings", "textarea"],
-
-
-
   ["medicalSummary", "Medical history and treatment summary", "textarea"],
-
   ["previousTreatmentSummary", "Previous treatment summary", "textarea"],
-
-
-
-
-
+  ["doctorNotes", "Doctor Notes", "textarea"],
 ],
-
- treatment: [
-  ["treatmentType", "Type of treatment / surgery"],
-  ["specialty", "Medical specialty / department"],
-  ["treatmentPlan", "Proposed treatment plan", "textarea"],
-  ["treatmentDuration", "Expected treatment duration"],
-
+  visa: [
+  ["visaType", "Visa type"],
+  ["visaCategory", "Visa category"],
+  ["visaStatus", "Visa application status"],
+  ["visaReference", "Visa application / reference number"],
+  ["visaApplicationDate", "Application date"],
+  ["visaApprovalDate", "Approval date"],
+  ["visaValidity", "Visa validity"],
+  ["visaExpiry", "Visa expiry date"],
+  ["medicalVisaType", "Medical visa type"],
+  ["medicalVisaNumber", "Medical visa number"],
+  ["attendantName", "Medical attendant name"],
+  ["attendantRelationship", "Attendant relationship"],
+  ["attendantPassport", "Attendant passport number"],
+  ["attendantVisa", "Medical attendant visa details"],
+  // ["internalRemarks", "Internal Remarks", "textarea"],
+],
+  treatment: [
+  ["treatmentType", "Type of surgery / medical treatment"],
+  ["specialty", "Medical specialty"],
+  ["department", "Department"],
+  ["treatmentPlan", "Proposed treatment plan"],
   ["estimatedCost", "Estimated treatment cost"],
   ["approvedQuotation", "Approved quotation / reference"],
-
-  [
-    "treatmentStatus",
-    "Treatment status",
-    "select",
-    [
-      "Under Review",
-      "Consultation Pending",
-      "Treatment Planned",
-      "Confirmed",
-      "Admitted",
-      "In Treatment",
-      "Discharged",
-      "Follow-up",
-    ],
-  ],
-
-  ["plannedAdmission", "Planned admission date", "date"],
-  ["plannedDischarge", "Planned discharge date", "date"],
-  ["actualAdmission", "Actual admission date", "date"],
-  ["actualDischarge", "Actual discharge date", "date"],
+  ["treatmentDuration", "Expected treatment duration"],
+  ["treatmentStatus", "Treatment status"],
+  ["plannedAdmission", "Planned admission date"],
+  ["plannedDischarge", "Planned discharge date"],
+  ["actualAdmission", "Actual admission date"],
+  ["actualDischarge", "Actual discharge date"],
+],
+hospital: [
+  ["doctorName", "Treating doctor's name"],
+  ["doctorSpecialty", "Doctor's specialty"],
+  ["hospitalName", "Hospital / healthcare facility name"],
+  ["hospitalAddress", "Hospital address"],
+  ["hospitalPhone", "Hospital contact number"],
+  ["hospitalEmail", "Hospital email address"],
+  ["coordinatorName", "Assigned medical coordinator"],
+  ["coordinatorPhone", "Coordinator contact number"],
+  ["coordinatorEmail", "Coordinator email address"],
+  ["appointmentDate", "Appointment date"],
+  ["appointmentTime", "Consultation timing"],
+  ["additionalAppointments", "Additional appointment dates and consultation timings"],
+  ["admissionConfirmation", "Hospital admission confirmation"],
 ],
 
-  hospital: [
-
-    ["doctorName", "Treating doctor name"],
-
-    ["doctorSpecialty", "Doctor specialty"],
-
-    ["hospitalName", "Hospital / healthcare facility"],
-
-    ["hospitalAddress", "Hospital address", "textarea"],
-
-    ["hospitalPhone", "Hospital contact number", "tel"],
-
-    ["coordinatorName", "Assigned Akeso coordinator"],
-
-    ["coordinatorPhone", "Coordinator contact number", "tel"],
-
-    ["admissionConfirmation", "Admission confirmation"],
-
-  ],
-
-  stay: [
-
-    ["hotelName", "Hotel / accommodation name"],
-
-    ["hotelAddress", "Accommodation address", "textarea"],
-
-    ["hotelPhone", "Accommodation contact", "tel"],
-
-    ["checkIn", "Check-in date", "date"],
-
-    ["checkOut", "Check-out date", "date"],
-
-    ["bookingReference", "Booking confirmation reference"],
-
-    ["accommodationStatus", "Accommodation status", "select", [
-
-      "Not Booked", "Pending", "Confirmed", "Checked In", "Checked Out"
-
-    ]],
-
-    ["localTransport", "Local transportation details", "textarea"],
-
-    ["airportPickup", "Airport pickup arrangements", "textarea"],
-
-  ],
-
-  travel: [
-
-    ["departureCountry", "Departure country"],
-
-    ["departureCity", "Departure city"],
-
-    ["arrivalCity", "Destination city"],
-
-    ["arrivalAirport", "Arrival airport"],
-
-    ["arrivalDate", "Planned arrival date", "date"],
-
-    ["arrivalTime", "Planned arrival time", "time"],
-
-    ["airline", "Airline"],
-
-    ["flightNumber", "Arrival flight number"],
-
-    ["pnr", "E-ticket / booking reference / PNR"],
-
-    ["pickupStatus", "Airport pickup status", "select", [
-
-      "Pending", "Scheduled", "Completed"
-
-    ]],
-
-    ["returnDate", "Return journey date", "date"],
-
-    ["returnTime", "Return journey time", "time"],
-
-    ["returnFlight", "Return flight number"],
-
-    ["returnPnr", "Return booking reference"],
-
-    ["companions", "Travel companion details", "textarea"],
-
-    ["itinerary", "Travel itinerary", "textarea"],
-
-  ],
-
-  appointments: [
-
-    ["consultationDate", "Initial online consultation date", "date"],
-
-    ["appointmentDoctor", "Doctor name"],
-
-    ["appointmentSpecialty", "Doctor specialty"],
-
-    ["appointmentDate", "Upcoming appointment date", "date"],
-
-    ["appointmentTime", "Appointment time", "time"],
-
-    ["timezone", "Time zone"],
-
-    ["appointmentType", "Appointment type", "select", [
-
-      "Teleconsultation", "Hospital Consultation", "Follow-up"
-
-    ]],
-
-    ["meetingLink", "Meeting link / consultation instructions"],
-
-    ["appointmentStatus", "Appointment confirmation status", "select", [
-
-      "Requested", "Pending", "Confirmed", "Completed", "Cancelled"
-
-    ]],
-
-    ["previousConsultations", "Previous consultation history", "textarea"],
-
-    ["nextFollowup", "Next follow-up date", "date"],
-
-    ["postTreatmentSchedule", "Post-treatment consultation schedule", "textarea"],
-
-  ],
-
-  payments: [
-
-    ["estimatedCost", "Estimated treatment package cost"],
-
-    ["approvedQuotation", "Approved quotation / invoice"],
-
-    ["advancePayment", "Advance payment received"],
-
-    ["paymentStatus", "Hospital / treatment payment status", "select", [
-
-      "Pending", "Partially Paid", "Paid"
-
-    ]],
-
-    ["accommodationCost", "Accommodation expenses"],
-
-    ["transportCost", "Transportation expenses"],
-
-    ["otherExpenses", "Other approved expenses"],
-
-    ["balance", "Outstanding balance"],
-
-    ["transactionReference", "Payment transaction reference"],
-
-    ["finalStatement", "Final statement of expenses", "textarea"],
-
-  ],
+stay: [
+  ["hotelName", "Hotel or accommodation name"],
+  ["accommodationType", "Accommodation type"],
+  ["hotelAddress", "Full accommodation address"],
+  ["accommodationContactName", "Accommodation contact person"],
+  ["hotelPhone", "Accommodation contact number"],
+  ["accommodationEmail", "Accommodation email address"],
+  ["checkIn", "Check-in date"],
+  ["checkOut", "Check-out date"],
+  ["bookingReference", "Booking confirmation / reservation number"],
+  ["bookingConfirmation", "Booking confirmation details"],
+  ["accommodationStatus", "Accommodation status"],
+  ["airportPickupRequired", "Airport pickup required"],
+  ["airportPickupDate", "Airport pickup date"],
+  ["airportPickupTime", "Airport pickup time"],
+  ["airportPickupLocation", "Airport pickup location"],
+  ["airportDropLocation", "Airport drop-off location"],
+  ["localTransport", "Local transportation arrangements"],
+  ["transportationContact", "Transportation contact person"],
+  ["transportationPhone", "Transportation contact number"],
+  ["additionalStayNotes", "Additional accommodation notes"],
+],
+travel: [
+  ["departureCountry", "Country of departure"],
+  ["departureCity", "City of departure"],
+  ["departureAirport", "Departure airport"],
+  ["arrivalDate", "Planned arrival date"],
+  ["arrivalTime", "Planned arrival time"],
+  ["arrivalAirport", "Arrival airport"],
+  ["arrivalCity", "Destination city"],
+  ["arrivalCountry", "Destination country"],
+  ["airline", "Airline name"],
+  ["flightNumber", "Outbound flight number"],
+  ["flightBookingReference", "Flight booking reference / PNR"],
+  ["ticketNumber", "E-ticket number"],
+  ["flightClass", "Flight class"],
+  ["pickupStatus", "Airport pickup status"],
+  ["pickupDate", "Airport pickup date"],
+  ["pickupTime", "Airport pickup time"],
+  ["pickupContactName", "Airport pickup contact person"],
+  ["pickupContactNumber", "Airport pickup contact number"],
+  ["pickupLocation", "Airport pickup location"],
+  ["transferDetails", "Airport transfer arrangements"],
+  ["returnDate", "Return journey date"],
+  ["returnTime", "Return journey time"],
+  ["returnAirline", "Return airline name"],
+  ["returnFlight", "Return flight number"],
+  ["returnAirport", "Return departure airport"],
+  ["returnDestination", "Return destination"],
+  ["returnPnr", "Return booking reference / PNR"],
+  ["returnTicketNumber", "Return e-ticket number"],
+  ["companions", "Travel companion details"],
+  ["itinerary", "Complete travel itinerary"],
+  ["travelNotes", "Additional travel notes"],
+],
+appointments: [
+  ["consultationDate", "Initial online consultation date"],
+  ["doctorName", "Doctor's name"],
+  ["doctorSpecialty", "Doctor's specialty"],
+  ["upcomingAppointments", "Upcoming teleconsultation appointments"],
+  ["appointmentDateTime", "Appointment date and time"],
+  ["appointmentTimeZone", "Appointment time zone"],
+  ["meetingLink", "Meeting link or consultation instructions"],
+  ["appointmentConfirmation", "Appointment confirmation and reminders"],
+  ["previousConsultations", "Previous consultation history"],
+  ["nextFollowup", "Next follow-up appointment"],
+  ["postTreatmentSchedule", "Post-treatment teleconsultation schedule"],
+],
 
 };
-
-
 
 const JOURNEY = [
 
   "Registration Completed",
-
   "Medical Records Received",
-
   "Medical Evaluation in Progress",
 
   "Doctor Consultation Scheduled",
@@ -481,115 +264,116 @@ const DOC_TYPES = [
 
 ];
 
-
-
-
-
 const SECTION_DOCUMENTS = {
-
   personal: [
-
-  {
-
-    label: "Profile Photo",
-
-    category: "Profile Photo",
-
-    description: "Upload your profile photograph (JPG, PNG or WEBP)",
-
-  },
-
-],
+    {
+      label: "Profile Photo",
+      category: "Profile Photo",
+      description: "Upload your profile photograph (JPG, PNG or WEBP)",
+    },
+  ],
 
   passport: [
-
     {
-
       label: "Passport Copy",
-
       category: "Passport",
-
       description: "Upload passport image, PDF or Word document",
-
     },
-
   ],
-
-
 
   visa: [
-
     {
-
       label: "Visa Document",
-
       category: "Visa",
-
       description: "Upload medical visa or approved visa document",
-
     },
-
     {
-
       label: "Medical Attendant Visa Document",
-
       category: "Medical Attendant Visa",
-
       description: "Upload attendant visa, where applicable",
-
     },
-
   ],
-
-
 
   treatment: [
-    { label: "Consent Forms & Treatment Documents", category: "Consent Form", description: "Consent forms, treatment plans and quotations" },
+    {
+      label: "Consent Forms & Treatment Documents",
+      category: "Consent Form",
+      description: "Consent forms, treatment plans and quotations",
+    },
   ],
+
   medical: [
-
     {
-
       label: "Laboratory Reports",
-
       category: "Lab Reports",
-
       description: "Blood tests, pathology and laboratory reports",
-
     },
-
     {
-
       label: "Scans & Diagnostic Records",
-
       category: "Scans",
-
       description: "MRI, CT, X-ray, ultrasound and diagnostic reports",
-
     },
-
     {
-
       label: "Medical History & Treatment Summaries",
-
       category: "Medical History",
-
       description: "Previous treatment and medical history documents",
-
     },
-
     {
-
       label: "Medical Documents & Reports",
-
       category: "Medical Reports",
-
       description: "Additional medical records and supporting reports",
-
     },
-
   ],
 
+  hospital: [
+    {
+      label: "Hospital Documents",
+      category: "Hospital Documents",
+      description: "Hospital details, admission confirmation and related documents",
+    },
+    {
+      label: "Doctor Consultation Documents",
+      category: "Doctor Consultation",
+      description: "Doctor consultation notes and supporting documents",
+    },
+    {
+      label: "Admission Confirmation",
+      category: "Admission Confirmation",
+      description: "Hospital admission letters and confirmation documents",
+    },
+  ],
+
+  stay: [
+    {
+      label: "Accommodation Confirmation",
+      category: "Accommodation Confirmation",
+      description: "Hotel booking and accommodation confirmation documents",
+    },
+  ],
+
+  travel: [
+    {
+      label: "Flight Tickets",
+      category: "Flight Ticket",
+      description: "Outbound and return flight tickets",
+    },
+    {
+      label: "Travel Documents",
+      category: "Travel Documents",
+      description: "Travel itinerary, booking confirmation and related documents",
+    },
+  ],
+
+  appointments: [
+    {
+      label: "Appointment Confirmation",
+      category: "Appointment Confirmation",
+      description: "Consultation appointments and confirmation documents",
+    },
+  ],
+
+  // Dynamic categories uploaded by admin are displayed
+  // directly from the backend documents array.
 };
 
 const inputClass =
@@ -751,52 +535,25 @@ function SectionTitle({ icon: Icon, title, description, action }) {
         </div>
 
       </div>
-
       {action}
-
     </div>
-
   );
-
 }
-
-
 
 function getStoredData(storageKey) {
-
   if (!storageKey) return {};
-
-
-
   try {
-
     const parsed = JSON.parse(localStorage.getItem(storageKey));
-
     return parsed && typeof parsed === "object" ? parsed : {};
-
   } catch {
-
     return {};
-
   }
-
 }
 
-
-
 export default function Profile() {
-
   const user = getUser();
-
-
-
   const storageKey = getPatientKey(user);
-
-
-
   const [patientId, setPatientId] = useState("");
-
-
 
  const STAFF_SECTIONS = [
   "visa",
@@ -808,42 +565,22 @@ export default function Profile() {
 ];
 
   const [active, setActive] = useState("overview");
-
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const [editing, setEditing] = useState(null);
-
   const [draft, setDraft] = useState({});
-
   const [notice, setNotice] = useState("");
-
-
-
   // Patient data is loaded from the authenticated backend API.
-
   const [saved, setSaved] = useState({});
 
-
-
   const [journey, setJourney] = useState(() =>
-
     JOURNEY.map((name, index) => ({
-
       name,
-
       status: "Not Started",
-
       date: "",
-
       requirements: "",
-
       remarks: "",
-
     }))
-
   );
-
-
 
   // Files are uploaded to the backend; pending uploads remain in memory until saved.
 
@@ -877,392 +614,370 @@ export default function Profile() {
   }, [profilePhoto?.id]);
 
   const [pendingDocuments, setPendingDocuments] = useState([]);
-
-
-
   const [docCategory, setDocCategory] = useState("Medical Reports");
-
   const fileInputRef = useRef(null);
 
-
-
   const [loadingProfile,setLoadingProfile]=useState(true);
-
   useEffect(()=>{
-
     let cancelled=false;
-
     setLoadingProfile(true);
-
     patientCare.me().then(data=>{
-
       if(cancelled)return;
-
       setPatientId(data.patientId);
-
       setSaved(data.sections||{});
-
       setDocuments(data.documents||[]);
-
     }).catch(error=>{if(!cancelled)setNotice(error.message);})
-
       .finally(()=>{if(!cancelled)setLoadingProfile(false);});
-
     return ()=>{cancelled=true;};
-
   },[user?.id]);
-
-
 
 const documentUrlsRef = useRef(new Set());
 
-
-
 useEffect(() => {
-
   return () => {
-
     documentUrlsRef.current.forEach((url) =>
-
       URL.revokeObjectURL(url)
-
     );
-
     documentUrlsRef.current.clear();
-
   };
-
 }, []);
 
-
-
-
-
   const name =
-
     saved.personal?.fullName ||
-
     user?.name ||
-
     user?.full_name ||
-
     "Patient";
 
-
-
   const completedSections = Object.keys(FIELDS).filter(
-
     (id) =>
-
       Object.values(saved[id] || {}).some(
-
         (value) => String(value || "").trim() !== ""
-
       )
-
   ).length;
-
-
 
   const totalFields = Object.values(FIELDS).reduce(
-
     (count, fields) => count + fields.length,
-
     0
-
   );
-
-
 
   const filledFields = Object.entries(FIELDS).reduce(
-
     (count, [section, fields]) =>
-
       count +
-
       fields.filter(([key]) =>
-
         String(saved[section]?.[key] || "").trim()
-
       ).length,
-
     0
-
   );
-
-
 
   const profileProgress = Math.round(
-
     (filledFields / totalFields) * 100
-
   );
-
-
 
   const completedStages = journey.filter(
-
     (stage) => stage.status === "Completed"
-
   ).length;
 
-
-
   const journeyProgress = Math.round(
-
     (completedStages / JOURNEY.length) * 100
-
   );
-
-
 
   const sectionName = NAV.find((item) => item.id === active);
 
-
-
   function navigate(id) {
-
     setActive(id);
-
     setEditing(null);
-
     setMobileOpen(false);
-
     window.scrollTo({ top: 0, behavior: "smooth" });
-
   }
-
-
-
   function startEdit(id) {
-
   setDraft({ ...(saved[id] || {}) });
-
   setPendingDocuments([]);
-
   setEditing(id);
-
 }
-
-
 
 function cancelEdit() {
-
   pendingDocuments.forEach((doc) => URL.revokeObjectURL(doc.url));
-
-
-
   setPendingDocuments([]);
-
   setDraft({});
-
   setEditing(null);
-
 }
-
-
 
 async function saveSection(id) {
-
   try {
+    // Save profile section details
+    const result = await patientCare.save(id, draft);
 
-    const result=await patientCare.save(id,draft);
+    // Upload newly selected documents
+    const uploadResults = await Promise.allSettled(
+  pendingDocuments.map((doc) =>
+    patientCare.upload(doc.file, doc.sectionId, doc.category)
+  )
+);
 
-    const uploaded=[];
+const uploaded = uploadResults
+  .filter(
+    (result) => result.status === "fulfilled" && result.value
+  )
+  .map((result) => result.value);
 
-    for(const doc of pendingDocuments){
+const failedCount = uploadResults.filter(
+  (result) => result.status === "rejected"
+).length;
 
-      const row=await patientCare.upload(doc.file,id,doc.category);
+    // Update saved profile information
+    setSaved(previous => ({
+      ...previous,
+      [id]: result.data,
+    }));
 
-      uploaded.push(row);
+    // Update document list
+    setDocuments(previous => {
+  const combined = [...uploaded, ...previous];
 
-    }
+  return combined.filter(
+    (doc, index, self) =>
+      self.findIndex(
+        item => String(item.id) === String(doc.id)
+      ) === index
+  );
+});
 
-    setSaved(previous=>({...previous,[id]:result.data}));
+    // Revoke temporary preview URLs
+    pendingDocuments.forEach(doc => {
+      URL.revokeObjectURL(doc.url);
+      documentUrlsRef.current.delete(doc.url);
+    });
 
-    setDocuments(previous=>[...uploaded,...previous]);
+    setPendingDocuments([]);
+    setEditing(null);
+    setDraft({});
+    // setNotice("Details and documents saved successfully.");
+    setNotice(
+  failedCount === 0
+    ? "Details and documents saved successfully."
+    : `Profile details saved. ${uploaded.length} document(s) uploaded, but ${failedCount} upload(s) failed. Please retry the failed documents.`
+);
 
-    pendingDocuments.forEach(doc=>{URL.revokeObjectURL(doc.url);documentUrlsRef.current.delete(doc.url);});
-
-    setPendingDocuments([]);setEditing(null);setDraft({});
-
-    setNotice('Details saved successfully.');
-
-  } catch(error){setNotice(error.message+' — please retry.');}
-
+  } catch (error) {
+    console.error("Profile save error:", error);
+    setNotice(
+      error.response?.data?.message ||
+      error.message ||
+      "Unable to save details. Please retry."
+    );
+  }
 }
 
-
-
   function updateDraft(key, value) {
-
     setDraft((previous) => ({
-
       ...previous,
-
       [key]: value,
-
     }));
 
   }
 
-
-
  function uploadDocuments(event, categoryOverride = null, sectionId = null) {
-
   const selectedFiles = Array.from(event.target.files || []);
-
-
-
   const allowedExtensions = /\.(pdf|doc|docx|jpg|jpeg|png|webp)$/i;
-
   const maxSize = 10 * 1024 * 1024;
-
-
-
   const validFiles = selectedFiles.filter(
-
     (file) =>
-
       allowedExtensions.test(file.name) &&
-
       file.size <= maxSize
-
   );
 
-
-
   if (validFiles.length !== selectedFiles.length) {
-
     setNotice("Only PDF, Word and image files up to 10 MB are accepted.");
-
   }
 
-
-
   const newDocuments = validFiles.map((file) => ({
-
     id: crypto.randomUUID(),
-
     name: file.name,
-
     type: file.type,
-
     category: categoryOverride || docCategory,
-
     sectionId: sectionId || "documents",
-
     size: file.size,
-
     date: new Date().toLocaleDateString("en-IN"),
-
     url: URL.createObjectURL(file),
-
     file,
-
   }));
 
-
-
   newDocuments.forEach((doc) => {
-
   documentUrlsRef.current.add(doc.url);
 
 });
 
-
-
   if (sectionId) {
-
     setPendingDocuments((previous) => [
-
       ...previous,
-
       ...newDocuments,
-
     ]);
-
   } else {
+    Promise.allSettled(
+  newDocuments.map((doc) =>
+    patientCare.upload(doc.file, "documents", doc.category)
+  )
+)
+  .then((results) => {
+    const uploaded = results
+      .filter((result) => result.status === "fulfilled" && result.value)
+      .map((result) => result.value);
 
-    Promise.all(newDocuments.map(doc=>patientCare.upload(doc.file,'documents',doc.category)))
+    const failedCount = results.filter(
+      (result) => result.status === "rejected"
+    ).length;
 
-      .then(rows=>{setDocuments(previous=>[...rows,...previous]);setNotice('Documents uploaded.');})
+    if (uploaded.length > 0) {
+      setDocuments((previous) => {
+        const combined = [...uploaded, ...previous];
 
-      .catch(error=>setNotice(error.message))
+        return combined.filter(
+          (doc, index, self) =>
+            self.findIndex(
+              (item) => String(item.id) === String(doc.id)
+            ) === index
+        );
+      });
+    }
 
-      .finally(()=>newDocuments.forEach(doc=>{URL.revokeObjectURL(doc.url);documentUrlsRef.current.delete(doc.url);}));
-
+    setNotice(
+      failedCount === 0
+        ? "Documents uploaded successfully."
+        : `${uploaded.length} document(s) uploaded. ${failedCount} upload(s) failed. Please retry.`
+    );
+  })
+  .finally(() => {
+    newDocuments.forEach((doc) => {
+      URL.revokeObjectURL(doc.url);
+      documentUrlsRef.current.delete(doc.url);
+    });
+  });
+    // Promise.all(newDocuments.map(doc=>patientCare.upload(doc.file,'documents',doc.category)))
+    //   .then(rows=>{setDocuments(previous=>[...rows,...previous]);setNotice('Documents uploaded.');})
+    //   .catch(error=>setNotice(error.message))
+    //   .finally(()=>newDocuments.forEach(doc=>{URL.revokeObjectURL(doc.url);documentUrlsRef.current.delete(doc.url);}));
   }
-
-
-
   event.target.value = "";
-
 }
-
-
 
 function removePendingDocument(id) {
-
   setPendingDocuments((previous) => {
-
     const item = previous.find((doc) => doc.id === id);
-
-
-
     if (item) URL.revokeObjectURL(item.url);
-
-
-
     return previous.filter((doc) => doc.id !== id);
-
   });
-
 }
 
-
-
-
-
-
-
-
-
 async function removeDocument(id){try{await patientCare.remove(id);setDocuments(prev=>prev.filter(d=>d.id!==id));}catch(e){setNotice(e.message);}}
-
  function openDocument(doc){patientCare.download(doc.id,doc.name).catch(e=>setNotice(e.message));}
+ 
+function normalizeDocumentValue(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, "");
+}
+
+function isSameDocumentSection(doc, sectionId) {
+  const actualSection = normalizeDocumentValue(
+    doc.sectionId || doc.section_id || doc.section
+  );
+
+  const expectedSection = normalizeDocumentValue(sectionId);
+
+  const sectionAliases = {
+    personal: ["personal", "profile", "personalinformation"],
+    passport: ["passport", "identity", "passportidentity"],
+    medical: ["medical", "medicalrecords", "medicalrecord"],
+    visa: ["visa", "immigration", "visaimmigration"],
+    treatment: ["treatment", "surgery", "treatmentsurgery"],
+    hospital: ["hospital", "doctorhospital", "doctorandhospital"],
+    stay: ["stay", "accommodation"],
+    travel: ["travel", "flight", "traveldetails"],
+    appointments: ["appointments", "appointment"],
+    documents: ["documents", "document"],
+  };
+
+  const allowedSections = [
+    expectedSection,
+    ...(sectionAliases[sectionId] || []),
+  ];
+
+  return allowedSections.includes(actualSection);
+}
+
+function isSameDocumentCategory(doc, category) {
+  return (
+    normalizeDocumentValue(
+      doc.category || doc.documentType || doc.document_type
+    ) === normalizeDocumentValue(category)
+  );
+}
 
  function renderSectionDocuments(id, isEditing = false) {
 
-  const uploadGroups = SECTION_DOCUMENTS[id] || [];
 
+  
+// const uploadGroups = SECTION_DOCUMENTS[id] || [];
+const uploadGroups = [];
 
+// Get ALL documents uploaded for this particular section by admin or patient.
+const sectionDocuments = documents.filter((doc) =>
+  isSameDocumentSection(doc, id)
+);
 
-  if (uploadGroups.length === 0) return null;
+// Find categories which are not already defined in SECTION_DOCUMENTS.
+// These include admin dropdown categories and custom/Other categories.
+const dynamicGroups = [];
 
+sectionDocuments.forEach((doc) => {
+  const category = String(
+    doc.category || doc.documentType || doc.document_type || "Other Documents"
+  ).trim();
+
+  const alreadyExists = uploadGroups.some(
+    (group) =>
+      normalizeDocumentValue(group.category) ===
+      normalizeDocumentValue(category)
+  );
+
+  const alreadyAdded = dynamicGroups.some(
+    (group) =>
+      normalizeDocumentValue(group.category) ===
+      normalizeDocumentValue(category)
+  );
+
+  if (!alreadyExists && !alreadyAdded) {
+    dynamicGroups.push({
+      label: category,
+      category,
+      description: "Documents uploaded by the Akeso team",
+    });
+  }
+});
+
+// Show both predefined categories and categories added dynamically by admin.
+const allUploadGroups = [...uploadGroups, ...dynamicGroups];
+
+if (allUploadGroups.length === 0 && sectionDocuments.length === 0) {
+  return null;
+}
 
 
   return (
-
     <div className="mt-6 border-t border-[#E7EEEE] pt-5">
-
-
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-        {uploadGroups.map((group) => {
+        {/* {uploadGroups.map((group) => { */}
+        {allUploadGroups.map((group) => {
 
-          const savedFiles = documents.filter(
-
-            (doc) =>
-
-              doc.sectionId === id &&
-
-              doc.category === group.category
-
-          );
-
-
+       const savedFiles = sectionDocuments.filter(
+  (doc) =>
+    normalizeDocumentValue(
+      doc.category || doc.documentType || doc.document_type || "Other Documents"
+    ) === normalizeDocumentValue(group.category)
+);
 
           const newFiles = isEditing
 
@@ -1406,7 +1121,9 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
 
                         <p className="mt-1 text-xs text-[#526467]">
 
-                          {(doc.size / 1024).toFixed(1)} KB
+                        {doc.size
+  ? `${(Number(doc.size) / 1024).toFixed(1)} KB`
+  : "Size unavailable"}
 
                           {isPending ? " · Not saved yet" : ""}
 
@@ -1703,57 +1420,39 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
   </div>
 
 ) : (
+  <>
+    <div className="rounded-xl border border-dashed border-[#C9DCD8] bg-[#FAFCFB] px-5 py-10 text-center">
+      <ClipboardList
+        size={34}
+        className="mx-auto text-[#064B50]"
+      />
 
-          <div className="rounded-xl border border-dashed border-[#C9DCD8] bg-[#FAFCFB] px-5 py-10 text-center">
+      <h3 className="mt-4 text-lg font-bold text-[#263F41]">
+        No details added yet
+      </h3>
 
-            <ClipboardList
+      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#526467]">
+        {STAFF_SECTIONS.includes(id)
+          ? "The Akeso team will update this information when it becomes available."
+          : "Click Add Details to complete this section of your patient profile."}
+      </p>
 
-              size={34}
+      {!STAFF_SECTIONS.includes(id) && (
+        <button
+          type="button"
+          onClick={() => startEdit(id)}
+          className={`${primaryButton} mt-5`}
+        >
+          <Plus size={17} /> Add Details
+        </button>
+      )}
+    </div>
 
-              className="mx-auto text-[#064B50]"
-
-            />
-
-
-
-            <h3 className="mt-4 text-lg font-bold text-[#263F41]">
-
-              No details added yet
-
-            </h3>
-
-
-
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#526467]">
-
-              Click Add Details to complete this section of your
-
-              patient profile.
-
-            </p>
-
-
-
-            {!STAFF_SECTIONS.includes(id) && <button
-
-              type="button"
-
-              onClick={() => startEdit(id)}
-
-              className={`${primaryButton} mt-5`}
-
-            >
-
-              <Plus size={17} /> Add Details
-
-            </button>}
-
-          </div>
-
-        )}
-
-
-
+    {/* SHOW ADMIN-UPLOADED DOCUMENTS EVEN WHEN NO DETAILS EXIST */}
+    {documents.some((doc) => isSameDocumentSection(doc, id)) &&
+      renderSectionDocuments(id, false)}
+  </>
+)}
       </section>
 
     );
@@ -2252,7 +1951,10 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
 
           />
 
-          {documents.filter(doc => doc.sectionId === "documents").length === 0 ? (
+          {/* {documents.filter(doc => doc.sectionId === "documents").length === 0 ? ( */}
+          {documents.filter((doc) =>
+  isSameDocumentSection(doc, "documents")
+).length === 0 ? (
 
   <p className="text-[15px] text-[#526467]">
 
@@ -2264,7 +1966,10 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
 
   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 
-    {documents.filter(doc => doc.sectionId === "documents").map((doc) => (
+    {/* {documents.filter(doc => doc.sectionId === "documents").map((doc) => ( */}
+     {documents
+      .filter((doc) => isSameDocumentSection(doc, "documents"))
+      .map((doc) => (
 
       <div
 
@@ -2331,28 +2036,19 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
   </div>
 
 )}
-
         </section>
-
       </div>
-
     );
-
-  }
-
-
+ }
 
   const extraDocuments = documents.filter(
-
   (doc) => !doc.sectionId || doc.sectionId === "documents"
-
 );
 
-
-
-  function renderDocuments() {
-
-    const extraDocuments=documents.filter(doc=>doc.sectionId==='documents');
+function renderDocuments() {
+  const extraDocuments = documents.filter((doc) =>
+    isSameDocumentSection(doc, "documents")
+  );
 
     return (
 
@@ -2411,1831 +2107,327 @@ async function removeDocument(id){try{await patientCare.remove(id);setDocuments(
               onChange={(e) => setDocCategory(e.target.value)}
 
             >
-
               {DOC_TYPES.map((type) => (
-
                 <option key={type} value={type}>{type}</option>
-
               ))}
-
             </select>
-
           </div>
-
-
 
           <input
-
             ref={fileInputRef}
-
             type="file"
-
             multiple
-
             accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx"
-
             className="hidden"
-
             onChange={uploadDocuments}
-
           />
 
-
-
           <button
-
             type="button"
-
             onClick={() => fileInputRef.current?.click()}
-
             className={`${primaryButton} mt-5`}
-
           >
-
             <Plus size={17} />
-
             Choose Documents
-
           </button>
 
         </div>
-
-
-
         <h3 className="mb-4 mt-8 text-lg font-bold text-[#263F41]">
-
           My Documents ({extraDocuments.length})
-
         </h3>
 
-
-
         {extraDocuments.length === 0 ? (
-
           <div className="rounded-xl border border-[#E5ECEB] p-8 text-center">
-
             <FileText
-
               size={30}
-
               className="mx-auto text-[#064B50]"
-
             />
-
             <p className="mt-3 text-[15px] font-semibold text-[#263F41]">
-
               No documents selected yet
-
             </p>
-
           </div>
-
         ) : (
-
           <div className="space-y-3">
-
             {extraDocuments.map((doc) => (
-
               <div
-
                 key={doc.id}
-
                 className="flex flex-wrap items-center gap-4 rounded-xl border border-[#E5ECEB] p-4"
-
               >
-
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#EAF5F4] text-[#064B50]">
-
                   <FileText size={24} />
-
                 </div>
-
-
 
                 <div className="min-w-0 flex-1">
-
                   <p className="break-all text-[15px] font-bold text-[#263F41]">
-
                     {doc.name}
-
                   </p>
-
-
 
                   <p className="mt-1 text-sm text-[#526467]">
-
-                    {doc.category} · {(doc.size / 1024).toFixed(1)} KB
-
+                    {doc.category} · {doc.size
+  ? `${(Number(doc.size) / 1024).toFixed(1)} KB`
+  : "Size unavailable"}
                   </p>
-
                 </div>
-
-
 
                 <div className="flex flex-wrap gap-2">
-
                   {/**** Browser-supported formats can be opened ****/}
-
                   {(/\.(pdf|jpg|jpeg|png|webp)$/i.test(doc.name)) && (
-
                     <button type="button" onClick={()=>doc.file ? window.open(doc.url,"_blank") : openDocument(doc)}
-
                       className={outlineButton}
-
                     >
-
                       <Eye size={17} />
-
                       View
-
                     </button>
-
                   )}
 
-
-
                   <button type="button" onClick={()=>doc.file ? window.open(doc.url,"_blank") : openDocument(doc)}
-
                     className={outlineButton}
-
                   >
-
                     <Download size={17} />
-
                     Download
-
                   </button>
-
-
 
                   <button
-
                     type="button"
-
                     onClick={() => removeDocument(doc.id)}
-
                     className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600"
-
                   >
-
                     <Trash2 size={17} />
-
                     Remove
-
                   </button>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
-
         )}
-
       </section>
-
     );
-
   }
-
-
 
   function renderJourney() {
-
     return (
-
       <section className={cardClass}>
-
         <SectionTitle
-
           icon={Activity}
-
           title="Patient Journey Tracker"
-
           description="16 stages from registration to post-treatment follow-up."
-
         />
-
-
 
         <div className="mb-6 rounded-xl bg-[#F0F8F7] p-5">
-
           <div className="mb-3 flex items-center justify-between">
-
             <strong className="text-base text-[#263F41]">
-
               Journey Progress
-
             </strong>
-
             <strong className="text-xl text-[#064B50]">
-
               {journeyProgress}%
-
             </strong>
-
           </div>
-
-
 
           <div className="h-3 overflow-hidden rounded-full bg-[#DDEAE8]">
-
             <div
-
               className="h-full rounded-full bg-[#064B50]"
-
               style={{ width: `${journeyProgress}%` }}
-
             />
-
           </div>
-
         </div>
-
-
 
         <div className="mb-5 rounded-xl border border-[#D6E7E4] bg-[#F0F8F7] p-4 text-sm leading-6 text-[#344F51]">
-
           In production, official journey stages will be verified and
-
           updated by authorized Akeso staff. The controls below are
-
           only for testing the frontend design.
-
         </div>
-
-
 
         <div className="space-y-4">
-
           {journey.map((stage, index) => (
-
             <div
-
               key={stage.name}
-
               className="rounded-xl border border-[#E5ECEB] p-4 sm:p-5"
-
             >
-
               <div className="mb-4 flex items-start gap-3">
-
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF5F4] text-sm font-bold text-[#064B50]">
-
                   {index + 1}
-
                 </span>
 
-
-
                 <h3 className="pt-2 text-[15px] font-bold leading-6 text-[#263F41]">
-
                   {stage.name}
-
                 </h3>
-
               </div>
-
-
 
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-
                 <Field
-
                   label="Stage Status"
-
                   type="select"
-
                   options={[
-
                     "Not Started", "In Progress",
-
                     "Completed", "On Hold"
-
                   ]}
-
                   value={stage.status}
-
                   onChange={(value) =>
-
                     setJourney((previous) =>
-
                       previous.map((item, i) =>
-
-                        i === index ? { ...item, status: value } : item
-
-                      )
-
+                      i === index ? { ...item, status: value } : item
+                     )
                     )
-
                   }
-
                 />
 
-
-
                 <Field
-
                   label="Relevant Date"
-
                   type="date"
-
                   value={stage.date}
-
                   onChange={(value) =>
-
                     setJourney((previous) =>
-
                       previous.map((item, i) =>
-
                         i === index ? { ...item, date: value } : item
-
                       )
-
                     )
-
                   }
-
                 />
 
-
-
                 <Field
-
                   label="Pending Requirements"
-
                   value={stage.requirements}
-
                   onChange={(value) =>
-
                     setJourney((previous) =>
-
                       previous.map((item, i) =>
-
                         i === index ? { ...item, requirements: value } : item
-
                       )
-
                     )
-
-                  }
-
+                 }
                 />
-
-
 
                 <Field
-
                   label="Remarks"
-
                   value={stage.remarks}
-
                   onChange={(value) =>
-
                     setJourney((previous) =>
-
                       previous.map((item, i) =>
-
                         i === index ? { ...item, remarks: value } : item
-
                       )
-
                     )
-
                   }
-
                 />
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       </section>
-
     );
-
   }
-
-
 
   function renderNotifications() {
-
     return (
-
       <section className={cardClass}>
-
         <SectionTitle
-
           icon={Bell}
-
           title="Notifications"
-
           description="Appointments, visa, travel and treatment updates."
-
         />
 
-
-
-        <div className="rounded-xl border border-dashed border-[#D6E4E2] bg-[#FBFDFC] px-5 py-12 text-center">
-
+      <div className="rounded-xl border border-dashed border-[#D6E4E2] bg-[#FBFDFC] px-5 py-12 text-center">
           <Bell size={34} className="mx-auto text-[#064B50]" />
-
-
-
           <h3 className="mt-4 text-lg font-bold text-[#263F41]">
-
             No notifications yet
-
           </h3>
-
-
-
-          <p className="mt-2 text-sm leading-6 text-[#526467]">
-
+   <p className="mt-2 text-sm leading-6 text-[#526467]">
             Official reminders and notifications will appear here
-
             after backend integration.
-
           </p>
-
         </div>
-
       </section>
-
     );
-
   }
-
-
 
   function renderContent() {
-
     if (active === "overview") return renderOverview();
-
     if (active === "all-details") return renderAllDetails();
-
     if (FIELDS[active]) return renderSection(active);
-
     if (active === "documents") return renderDocuments();
-
     if (active === "journey") return renderJourney();
-
     if (active === "notifications") return renderNotifications();
-
-
-
     return null;
-
   }
 
-
-
   return (
-
     <main className="min-h-screen bg-[#F7FAF9] py-3 text-[#263F41] sm:py-4 lg:py-5">
-
       <div className="mx-auto w-full max-w-[1500px] px-4 sm:px-6 lg:px-8">
-
         <div className="mb-4 flex items-center rounded-xl border border-[#E2EAEA] bg-white px-4 py-3 shadow-sm sm:px-5">
-
   <h1 className="text-lg font-bold text-[#064B50] sm:text-xl">
-
     My Profile Dashboard
-
   </h1>
-
 </div>
-
-
-
-
-
         {notice && (
-
           <div
-
             role="status"
-
             className="mb-5 rounded-xl border border-[#D6E7E4] bg-[#EAF5F4] px-4 py-3 text-sm font-semibold text-[#064B50]"
-
           >
-
             {notice}
-
           </div>
-
         )}
-
-
-
         <div className="mb-5 lg:hidden">
-
           <button
-
             type="button"
-
             onClick={() => setMobileOpen((value) => !value)}
-
             className="flex w-full items-center justify-between rounded-xl border border-[#DDE8E6] bg-white px-4 py-4 text-sm font-bold text-[#263F41]"
-
           >
-
             <span className="flex items-center gap-3">
-
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-
               {active === "all-details"
-
                 ? "All My Details"
-
                 : sectionName?.label || "Overview"}
-
             </span>
-
-
-
             <ChevronRight size={19} />
-
           </button>
-
         </div>
-
-
-
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[265px_minmax(0,1fr)] xl:gap-7">
-
           <aside
-
             className={`rounded-2xl border border-[#E2EAEA] bg-white shadow-sm ${
-
               mobileOpen ? "block" : "hidden"
-
             } lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-115px)] lg:overflow-y-auto`}
-
           >
-
             <div className="flex items-center gap-3 border-b border-[#E8EEEE] p-5">
-
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#EAF5F4] text-[#064B50]">
-
                 <UserRound size={24} />
-
               </div>
-
-
-
               <div className="min-w-0">
-
                 <p className="break-words text-base font-bold text-[#263F41]">
-
                   {name}
-
                 </p>
-
                 <p className="mt-1 break-all text-xs font-semibold text-[#064B50]">
-
                   {patientId || "Patient ID pending"}
-
                 </p>
-
               </div>
-
             </div>
-
-
-
             <nav className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-2 lg:grid-cols-1">
-
               {NAV.map(({ id, label, icon: Icon }) => (
-
                 <button
-
                   key={id}
-
                   type="button"
-
                   onClick={() => navigate(id)}
-
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[14px] font-semibold leading-5 ${
-
                     active === id
-
                       ? "bg-[#EAF5F4] text-[#064B50]"
-
                       : "text-[#344F51] hover:bg-[#F1F7F6]"
-
                   }`}
-
                 >
-
                   <Icon
-
                     size={19}
-
                     className="shrink-0 text-[#064B50]"
-
                   />
-
-
-
                   <span className="min-w-0 flex-1">{label}</span>
-
-
-
                   {active === id && <ChevronRight size={16} />}
-
                 </button>
-
               ))}
-
             </nav>
-
           </aside>
-
-
-
           <div className="min-w-0">
-
             {renderContent()}
-
           </div>
-
         </div>
-
       </div>
-
     </main>
-
   );
-
 }
 
 
 
-
-
-
-
-
-
-
-
-// import {
-//   Activity,
-//   Building2,
-//   CalendarDays,
-//   Clock3,
-//   HeartPulse,
-//   Mail,
-//   Phone,
-//   Pill,
-//   ShieldCheck,
-//   Stethoscope,
-//   UserRound,
-// } from "lucide-react";
-
-// import { getUser } from "../utils/auth";
-
-// /* =========================================================
-//    MEDICAL HISTORY
-//    CURRENTLY HARDCODED
-// ========================================================= */
-
-// const medicalHistory = [
-//   {
-//     id: 1,
-//     date: "18 Sep 2026",
-//     doctor: "Dr. Arjun Reddy",
-//     speciality: "Cardiology",
-//     hospital: "Akeso Partner Hospital, Hyderabad",
-//     condition: "Hypertension",
-//     treatment:
-//       "Medication management and lifestyle modification.",
-//     medicines:
-//       "Amlodipine 5 mg – once daily",
-//     status: "Follow-up",
-//     nextVisit: "18 Dec 2026",
-//   },
-//   {
-//     id: 2,
-//     date: "06 Jul 2026",
-//     doctor: "Dr. Sneha Kapoor",
-//     speciality: "Orthopaedics",
-//     hospital: "Akeso Partner Hospital, Hyderabad",
-//     condition: "Lower Back Pain",
-//     treatment:
-//       "Physiotherapy and pain management.",
-//     medicines:
-//       "Supportive medication as advised",
-//     status: "Completed",
-//     nextVisit: "As Required",
-//   },
-//   {
-//     id: 3,
-//     date: "22 Mar 2026",
-//     doctor: "Dr. Vikram Rao",
-//     speciality: "General Medicine",
-//     hospital: "Akeso Partner Hospital, Hyderabad",
-//     condition: "Vitamin D Deficiency",
-//     treatment:
-//       "Vitamin supplementation and dietary advice.",
-//     medicines:
-//       "Vitamin D3 supplements",
-//     status: "Completed",
-//     nextVisit: "Completed",
-//   },
-//   {
-//     id: 4,
-//     date: "10 Jan 2026",
-//     doctor: "Dr. Arjun Reddy",
-//     speciality: "Cardiology",
-//     hospital: "Akeso Partner Hospital, Hyderabad",
-//     condition: "Routine Cardiac Evaluation",
-//     treatment:
-//       "ECG, blood pressure evaluation and specialist consultation.",
-//     medicines: "No new medication",
-//     status: "Completed",
-//     nextVisit: "Completed",
-//   },
-//   {
-//     id: 5,
-//     date: "18 Nov 2025",
-//     doctor: "Dr. Meera Sharma",
-//     speciality: "General Medicine",
-//     hospital: "Akeso Partner Hospital, Hyderabad",
-//     condition: "General Health Checkup",
-//     treatment:
-//       "Routine health evaluation and preventive care advice.",
-//     medicines: "No medication prescribed",
-//     status: "Completed",
-//     nextVisit: "As Required",
-//   },
-// ];
-
-// /* =========================================================
-//    PROFILE PAGE
-// ========================================================= */
-
-// export default function Profile() {
-//   /* =======================================================
-//      LOGGED-IN USER DETAILS
-//   ======================================================= */
-
-//   const user = getUser();
-
-//   const userName =
-//     user?.name ||
-//     user?.full_name ||
-//     user?.fullName ||
-//     "User";
-
-//   const userEmail =
-//     user?.email ||
-//     "Email not available";
-
-//   const userMobile =
-//     user?.mobile ||
-//     user?.phone ||
-//     user?.phone_number ||
-//     "Mobile number not available";
-
-//   return (
-//     <main className="min-h-screen bg-[#F5F8F8]">
-//       {/* =====================================================
-//           MAIN RESPONSIVE LAYOUT
-
-//           MOBILE  : Single column
-//           TABLET  : Single column
-//           DESKTOP : Sticky profile + history
-//       ====================================================== */}
-
-//       <section
-//         className="
-//           mx-auto
-//           grid
-//           w-full
-//           max-w-[1400px]
-//           grid-cols-1
-//           gap-4
-//           px-3
-//           py-5
-
-//           sm:gap-5
-//           sm:px-5
-//           sm:py-7
-
-//           md:px-6
-
-//           lg:grid-cols-[310px_minmax(0,1fr)]
-//           lg:items-start
-//           lg:gap-6
-//           lg:px-8
-//           lg:py-9
-
-//           xl:grid-cols-[360px_minmax(0,1fr)]
-//           xl:px-10
-//           xl:py-10
-//         "
-//       >
-//         {/* ===================================================
-//             LEFT SIDE - PROFILE
-//             DESKTOP STICKY
-//         =================================================== */}
-
-//         <aside
-//           className="
-//             w-full
-//             min-w-0
-
-//             lg:sticky
-//             lg:top-[110px]
-//             lg:self-start
-//           "
-//         >
-//           <div
-//             className="
-//               overflow-hidden
-//               rounded-[18px]
-//               border
-//               border-[#DCE8E7]
-//               bg-white
-//               shadow-[0_8px_30px_rgba(6,75,80,0.05)]
-
-//               sm:rounded-[20px]
-//               lg:rounded-[22px]
-//             "
-//           >
-//             {/* ===============================================
-//                 PROFILE HEADER
-//             =============================================== */}
-
-//             <div
-//               className="
-//                 relative
-//                 overflow-hidden
-//                 bg-[#064B50]
-//                 px-4
-//                 py-5
-//                 text-center
-
-//                 sm:px-5
-//                 sm:py-6
-
-//                 md:flex
-//                 md:items-center
-//                 md:gap-5
-//                 md:px-6
-//                 md:text-left
-
-//                 lg:block
-//                 lg:px-5
-//                 lg:py-7
-//                 lg:text-center
-//               "
-//             >
-//               {/* DECORATION */}
-
-//               <div
-//                 className="
-//                   absolute
-//                   -right-12
-//                   -top-12
-//                   h-32
-//                   w-32
-//                   rounded-full
-//                   border
-//                   border-white/10
-//                 "
-//               />
-
-//               <div
-//                 className="
-//                   absolute
-//                   -bottom-16
-//                   -left-14
-//                   h-36
-//                   w-36
-//                   rounded-full
-//                   border
-//                   border-white/10
-//                 "
-//               />
-
-//               {/* USER ICON */}
-
-//               <div
-//                 className="
-//                   relative
-//                   mx-auto
-//                   flex
-//                   h-[68px]
-//                   w-[68px]
-//                   shrink-0
-//                   items-center
-//                   justify-center
-//                   rounded-full
-//                   border-[3px]
-//                   border-[#C8942E]
-//                   bg-white
-//                   text-[#064B50]
-//                   shadow-lg
-
-//                   sm:h-[76px]
-//                   sm:w-[76px]
-
-//                   md:mx-0
-
-//                   lg:mx-auto
-//                   lg:h-[82px]
-//                   lg:w-[82px]
-//                 "
-//               >
-//                 <UserRound
-//                   size={34}
-//                   strokeWidth={1.6}
-//                 />
-//               </div>
-
-//               {/* USER NAME */}
-
-//               <div
-//                 className="
-//                   relative
-//                   mt-3
-//                   min-w-0
-
-//                   md:mt-0
-//                   lg:mt-4
-//                 "
-//               >
-//                 <h2
-//                   className="
-//                     break-words
-//                     text-[19px]
-//                     font-semibold
-//                     leading-tight
-//                     text-white
-
-//                     sm:text-[21px]
-//                     lg:text-[22px]
-//                   "
-//                 >
-//                   {userName}
-//                 </h2>
-
-//                 <p className="mt-1 text-[12px] text-white/70">
-//                   Patient Profile
-//                 </p>
-//               </div>
-//             </div>
-
-//             {/* ===============================================
-//                 PERSONAL INFORMATION
-//             =============================================== */}
-
-//             <div
-//               className="
-//                 p-4
-//                 sm:p-5
-//                 md:p-6
-//                 lg:p-5
-//                 xl:p-6
-//               "
-//             >
-//               <div className="flex items-center gap-2">
-//                 <div
-//                   className="
-//                     h-[3px]
-//                     w-6
-//                     rounded-full
-//                     bg-[#C8942E]
-//                   "
-//                 />
-
-//                 <h3
-//                   className="
-//                     text-[14px]
-//                     font-semibold
-//                     text-[#064B50]
-//                   "
-//                 >
-//                   Personal Information
-//                 </h3>
-//               </div>
-
-//               {/* =============================================
-//                   MOBILE  = 1 COLUMN
-//                   TABLET  = 3 COLUMNS
-//                   DESKTOP = 1 COLUMN
-//               ============================================= */}
-
-//               <div
-//                 className="
-//                   mt-5
-//                   grid
-//                   grid-cols-1
-//                   gap-5
-
-//                   sm:grid-cols-2
-//                   md:grid-cols-3
-//                   lg:grid-cols-1
-//                 "
-//               >
-//                 <ProfileInfo
-//                   icon={UserRound}
-//                   label="Full Name"
-//                   value={userName}
-//                 />
-
-//                 <ProfileInfo
-//                   icon={Mail}
-//                   label="Email Address"
-//                   value={userEmail}
-//                 />
-
-//                 <ProfileInfo
-//                   icon={Phone}
-//                   label="Mobile Number"
-//                   value={userMobile}
-//                 />
-//               </div>
-//             </div>
-//           </div>
-//         </aside>
-
-//         {/* ===================================================
-//             RIGHT SIDE
-//         =================================================== */}
-
-//         <div className="w-full min-w-0">
-//           {/* =================================================
-//               SUMMARY CARDS
-//           ================================================= */}
-
-//           <div
-//             className="
-//               grid
-//               grid-cols-2
-//               gap-2.5
-
-//               sm:gap-3
-//               md:grid-cols-4
-
-//               lg:grid-cols-2
-//               xl:grid-cols-4
-//             "
-//           >
-//             <SummaryCard
-//               icon={Stethoscope}
-//               value="05"
-//               label="Consultations"
-//             />
-
-//             <SummaryCard
-//               icon={UserRound}
-//               value="04"
-//               label="Doctors Consulted"
-//             />
-
-//             <SummaryCard
-//               icon={HeartPulse}
-//               value="03"
-//               label="Conditions"
-//             />
-
-//             <SummaryCard
-//               icon={Pill}
-//               value="04"
-//               label="Treatments"
-//             />
-//           </div>
-
-//           {/* =================================================
-//               MEDICAL HISTORY HEADING
-//           ================================================= */}
-
-//           <div
-//             className="
-//               mt-5
-//               rounded-[16px]
-//               border
-//               border-[#DCE8E7]
-//               bg-white
-//               p-4
-
-//               sm:mt-6
-//               sm:rounded-[20px]
-//               sm:p-5
-
-//               md:p-6
-//             "
-//           >
-//             <div
-//               className="
-//                 flex
-//                 items-start
-//                 gap-3
-//                 sm:gap-4
-//               "
-//             >
-//               <div
-//                 className="
-//                   flex
-//                   h-9
-//                   w-9
-//                   shrink-0
-//                   items-center
-//                   justify-center
-//                   rounded-lg
-//                   bg-[#EEF6F5]
-//                   text-[#064B50]
-
-//                   sm:h-11
-//                   sm:w-11
-//                   sm:rounded-xl
-//                 "
-//               >
-//                 <Activity size={19} />
-//               </div>
-
-//               <div className="min-w-0">
-//                 <p
-//                   className="
-//                     text-[9px]
-//                     font-bold
-//                     uppercase
-//                     tracking-[0.16em]
-//                     text-[#C8942E]
-
-//                     sm:text-[10px]
-//                     sm:tracking-[0.18em]
-//                   "
-//                 >
-//                   Medical History
-//                 </p>
-
-//                 <h1
-//                   className="
-//                     mt-1
-//                     break-words
-//                     text-[18px]
-//                     font-semibold
-//                     leading-6
-//                     text-[#064B50]
-
-//                     sm:text-[21px]
-//                     sm:leading-7
-
-//                     md:text-[24px]
-//                   "
-//                 >
-//                   Consultation & Treatment History
-//                 </h1>
-
-//                 <p
-//                   className="
-//                     mt-2
-//                     max-w-[700px]
-//                     text-[12px]
-//                     leading-5
-//                     text-[#66797A]
-
-//                     sm:text-[13px]
-//                     sm:leading-6
-
-//                     md:text-[14px]
-//                   "
-//                 >
-//                   Previous doctor consultations,
-//                   medical conditions, treatments,
-//                   medications and follow-up history.
-//                 </p>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* =================================================
-//               HISTORY CARDS
-//           ================================================= */}
-
-//           <div
-//             className="
-//               mt-4
-//               space-y-4
-
-//               sm:mt-5
-//               sm:space-y-5
-//             "
-//           >
-//             {medicalHistory.map(
-//               (record, index) => (
-//                 <HistoryCard
-//                   key={record.id}
-//                   record={record}
-//                   index={index}
-//                 />
-//               )
-//             )}
-//           </div>
-
-//           {/* =================================================
-//               NOTE
-//           ================================================= */}
-
-//           <div
-//             className="
-//               mt-5
-//               flex
-//               items-start
-//               gap-3
-//               rounded-[16px]
-//               border
-//               border-[#D6E5E3]
-//               bg-[#EEF6F5]
-//               p-4
-
-//               sm:mt-6
-//               sm:rounded-[18px]
-//               sm:p-5
-//             "
-//           >
-//             <ShieldCheck
-//               size={19}
-//               className="
-//                 mt-0.5
-//                 shrink-0
-//                 text-[#064B50]
-//               "
-//             />
-
-//             <div className="min-w-0">
-//               <p
-//                 className="
-//                   text-[13px]
-//                   font-semibold
-//                   text-[#064B50]
-
-//                   sm:text-[14px]
-//                 "
-//               >
-//                 Medical History
-//               </p>
-
-//               <p
-//                 className="
-//                   mt-1
-//                   text-[12px]
-//                   leading-5
-//                   text-[#607576]
-
-//                   sm:text-[13px]
-//                   sm:leading-6
-//                 "
-//               >
-//                 Your profile information and medical
-//                 consultation history are displayed here
-//                 for easy reference.
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-//     </main>
-//   );
-// }
-
-// /* =========================================================
-//    PROFILE INFORMATION
-// ========================================================= */
-
-// function ProfileInfo({
-//   icon: Icon,
-//   label,
-//   value,
-// }) {
-//   return (
-//     <div
-//       className="
-//         flex
-//         min-w-0
-//         items-start
-//         gap-3
-//       "
-//     >
-//       <div
-//         className="
-//           flex
-//           h-9
-//           w-9
-//           shrink-0
-//           items-center
-//           justify-center
-//           rounded-lg
-//           bg-[#EEF6F5]
-//           text-[#C8942E]
-
-//           sm:h-10
-//           sm:w-10
-//         "
-//       >
-//         <Icon size={16} />
-//       </div>
-
-//       <div className="min-w-0 flex-1">
-//         <p
-//           className="
-//             text-[9px]
-//             font-semibold
-//             uppercase
-//             tracking-[0.08em]
-//             text-[#8A9899]
-
-//             sm:text-[10px]
-//           "
-//         >
-//           {label}
-//         </p>
-
-//         <p
-//           className="
-//             mt-1
-//             break-all
-//             text-[12px]
-//             font-medium
-//             leading-5
-//             text-[#344F51]
-
-//             sm:break-words
-//             sm:text-[13px]
-//           "
-//         >
-//           {value}
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// /* =========================================================
-//    SUMMARY CARD
-// ========================================================= */
-
-// function SummaryCard({
-//   icon: Icon,
-//   value,
-//   label,
-// }) {
-//   return (
-//     <article
-//       className="
-//         min-w-0
-//         rounded-[14px]
-//         border
-//         border-[#DCE8E7]
-//         bg-white
-//         p-3
-//         transition-all
-//         duration-300
-
-//         sm:rounded-[16px]
-//         sm:p-4
-
-//         hover:-translate-y-1
-//         hover:border-[#C8942E]/40
-//         hover:shadow-[0_10px_25px_rgba(6,75,80,0.06)]
-//       "
-//     >
-//       <div
-//         className="
-//           flex
-//           h-8
-//           w-8
-//           items-center
-//           justify-center
-//           rounded-lg
-//           bg-[#EEF6F5]
-//           text-[#064B50]
-
-//           sm:h-9
-//           sm:w-9
-//         "
-//       >
-//         <Icon size={16} />
-//       </div>
-
-//       <p
-//         className="
-//           mt-3
-//           text-[21px]
-//           font-semibold
-//           leading-none
-//           text-[#064B50]
-
-//           sm:text-[24px]
-//         "
-//       >
-//         {value}
-//       </p>
-
-//       <p
-//         className="
-//           mt-1.5
-//           break-words
-//           text-[10px]
-//           leading-4
-//           text-[#708283]
-
-//           sm:mt-2
-//           sm:text-[12px]
-//           sm:leading-5
-//         "
-//       >
-//         {label}
-//       </p>
-//     </article>
-//   );
-// }
-
-// /* =========================================================
-//    HISTORY CARD
-// ========================================================= */
-
-// function HistoryCard({
-//   record,
-//   index,
-// }) {
-//   const isCompleted =
-//     record.status === "Completed";
-
-//   return (
-//     <article
-//       className="
-//         min-w-0
-//         overflow-hidden
-//         rounded-[16px]
-//         border
-//         border-[#DCE8E7]
-//         bg-white
-//         transition-all
-//         duration-300
-
-//         sm:rounded-[20px]
-
-//         hover:border-[#C8942E]/40
-//         hover:shadow-[0_12px_35px_rgba(6,75,80,0.07)]
-//       "
-//     >
-//       {/* =====================================================
-//           DOCTOR HEADER
-//       ====================================================== */}
-
-//       <div
-//         className="
-//           border-b
-//           border-[#E5EEEE]
-//           bg-[#F8FAFA]
-//           px-3.5
-//           py-3.5
-
-//           sm:px-5
-//           sm:py-4
-//         "
-//       >
-//         <div
-//           className="
-//             flex
-//             flex-col
-//             gap-3
-
-//             sm:flex-row
-//             sm:items-center
-//             sm:justify-between
-//           "
-//         >
-//           {/* DOCTOR DETAILS */}
-
-//           <div
-//             className="
-//               flex
-//               min-w-0
-//               items-center
-//               gap-3
-//             "
-//           >
-//             <div
-//               className="
-//                 flex
-//                 h-9
-//                 w-9
-//                 shrink-0
-//                 items-center
-//                 justify-center
-//                 rounded-full
-//                 bg-[#064B50]
-//                 text-[11px]
-//                 font-bold
-//                 text-white
-
-//                 sm:h-11
-//                 sm:w-11
-//                 sm:text-[12px]
-//               "
-//             >
-//               {String(index + 1).padStart(
-//                 2,
-//                 "0"
-//               )}
-//             </div>
-
-//             <div className="min-w-0">
-//               <h3
-//                 className="
-//                   break-words
-//                   text-[15px]
-//                   font-semibold
-//                   leading-5
-//                   text-[#064B50]
-
-//                   sm:text-[17px]
-//                   sm:leading-6
-//                 "
-//               >
-//                 {record.doctor}
-//               </h3>
-
-//               <p
-//                 className="
-//                   mt-0.5
-//                   text-[11px]
-//                   font-medium
-//                   text-[#C8942E]
-
-//                   sm:text-[13px]
-//                 "
-//               >
-//                 {record.speciality}
-//               </p>
-//             </div>
-//           </div>
-
-//           {/* DATE */}
-
-//           <div
-//             className="
-//               flex
-//               w-fit
-//               items-center
-//               gap-2
-//               rounded-full
-//               border
-//               border-[#DCE8E7]
-//               bg-white
-//               px-3
-//               py-1.5
-//               text-[11px]
-//               font-medium
-//               text-[#607576]
-
-//               sm:text-[12px]
-//             "
-//           >
-//             <CalendarDays size={13} />
-//             {record.date}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* =====================================================
-//           CONTENT
-//       ====================================================== */}
-
-//       <div
-//         className="
-//           p-3.5
-//           sm:p-5
-//         "
-//       >
-//         {/* ===================================================
-//             HOSPITAL
-//         =================================================== */}
-
-//         <div
-//           className="
-//             flex
-//             min-w-0
-//             items-start
-//             gap-2.5
-//             rounded-[12px]
-//             bg-[#F7FAFA]
-//             p-3
-
-//             sm:gap-3
-//             sm:rounded-[13px]
-//             sm:p-3.5
-//           "
-//         >
-//           <Building2
-//             size={17}
-//             className="
-//               mt-0.5
-//               shrink-0
-//               text-[#C8942E]
-//             "
-//           />
-
-//           <div className="min-w-0">
-//             <p
-//               className="
-//                 text-[9px]
-//                 font-bold
-//                 uppercase
-//                 tracking-[0.08em]
-//                 text-[#879596]
-
-//                 sm:text-[10px]
-//               "
-//             >
-//               Hospital
-//             </p>
-
-//             <p
-//               className="
-//                 mt-1
-//                 break-words
-//                 text-[12px]
-//                 font-medium
-//                 leading-5
-//                 text-[#344F51]
-
-//                 sm:text-[14px]
-//               "
-//             >
-//               {record.hospital}
-//             </p>
-//           </div>
-//         </div>
-
-//         {/* ===================================================
-//             HISTORY DETAILS
-
-//             MOBILE       = 1 column
-//             TABLET       = 2 columns
-//             DESKTOP      = 2 columns
-//             LARGE SCREEN = 3 columns
-//         =================================================== */}
-
-//         <div
-//           className="
-//             mt-4
-//             grid
-//             grid-cols-1
-//             gap-x-5
-//             gap-y-4
-
-//             sm:mt-5
-//             sm:grid-cols-2
-//             sm:gap-y-5
-
-//             lg:grid-cols-2
-//             2xl:grid-cols-3
-//           "
-//         >
-//           <HistoryItem
-//             icon={HeartPulse}
-//             label="Disease / Condition"
-//             value={record.condition}
-//           />
-
-//           <HistoryItem
-//             icon={Stethoscope}
-//             label="Treatment"
-//             value={record.treatment}
-//           />
-
-//           <HistoryItem
-//             icon={Pill}
-//             label="Medication"
-//             value={record.medicines}
-//           />
-
-//           <HistoryItem
-//             icon={CalendarDays}
-//             label="Consultation Date"
-//             value={record.date}
-//           />
-
-//           <HistoryItem
-//             icon={Clock3}
-//             label="Next Visit"
-//             value={record.nextVisit}
-//           />
-
-//           {/* STATUS */}
-
-//           <div className="min-w-0">
-//             <p
-//               className="
-//                 text-[9px]
-//                 font-bold
-//                 uppercase
-//                 tracking-[0.08em]
-//                 text-[#879596]
-
-//                 sm:text-[10px]
-//               "
-//             >
-//               Status
-//             </p>
-
-//             <span
-//               className={`
-//                 mt-2
-//                 inline-flex
-//                 rounded-full
-//                 px-3
-//                 py-1.5
-//                 text-[10px]
-//                 font-semibold
-
-//                 sm:text-[11px]
-
-//                 ${
-//                   isCompleted
-//                     ? "bg-[#EAF6EF] text-[#287548]"
-//                     : "bg-[#FFF4E1] text-[#A56A0B]"
-//                 }
-//               `}
-//             >
-//               {record.status}
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-//     </article>
-//   );
-// }
-
-// /* =========================================================
-//    HISTORY ITEM
-// ========================================================= */
-
-// function HistoryItem({
-//   icon: Icon,
-//   label,
-//   value,
-// }) {
-//   return (
-//     <div className="min-w-0">
-//       <div className="flex items-center gap-2">
-//         <Icon
-//           size={13}
-//           className="
-//             shrink-0
-//             text-[#C8942E]
-
-//             sm:h-[14px]
-//             sm:w-[14px]
-//           "
-//         />
-
-//         <p
-//           className="
-//             text-[9px]
-//             font-bold
-//             uppercase
-//             tracking-[0.07em]
-//             text-[#879596]
-
-//             sm:text-[10px]
-//             sm:tracking-[0.08em]
-//           "
-//         >
-//           {label}
-//         </p>
-//       </div>
-
-//       <p
-//         className="
-//           mt-1.5
-//           break-words
-//           text-[12px]
-//           font-medium
-//           leading-5
-//           text-[#344F51]
-
-//           sm:mt-2
-//           sm:text-[14px]
-//           sm:leading-6
-//         "
-//       >
-//         {value}
-//       </p>
-//     </div>
-//   );
-// }
