@@ -12,13 +12,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import {
-  loginUser,
-} from "../services/authService";
-
-import {
-  saveLogin,
-} from "../utils/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login({
   embedded = false,
@@ -28,6 +22,7 @@ export default function Login({
   onForgot,
 }) {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [form, setForm] =
     useState({
@@ -57,83 +52,51 @@ export default function Login({
     setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!form.email.trim()) {
-      setError(
-        "Please enter your email address."
-      );
-      return;
+  if (!form.email.trim()) {
+    setError("Please enter your email address.");
+    return;
+  }
+
+  if (!form.password) {
+    setError("Please enter your password.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    setError("");
+
+    await login({
+      email: form.email.trim(),
+      password: form.password,
+    });
+
+    onClose?.();
+
+    if (redirect) {
+      navigate(redirect);
+    } else {
+      navigate("/");
     }
+  } catch (err) {
+    console.error(
+      "Login API Error:",
+      err.response?.data || err
+    );
 
-    if (!form.password) {
-      setError(
-        "Please enter your password."
-      );
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError("");
-
-      const data =
-        await loginUser({
-          email:
-            form.email.trim(),
-
-          password:
-            form.password,
-        });
-
-      if (
-        !data?.token ||
-        !data?.user
-      ) {
-        throw new Error(
-          "Invalid login response."
-        );
-      }
-
-      saveLogin(
-        data.token,
-        data.user
-      );
-
-      onClose?.();
-
-      if (redirect) {
-        navigate(redirect);
-      } else {
-        navigate("/");
-      }
-      
-} catch (err) {
-  console.error(
-    "Login API Error:",
-    err.response?.data || err
-  );
-
-  setError(
-    err.response?.data?.message ||
-    err.response?.data?.error ||
-    err.message ||
-    "Unable to login."
-  );
-} finally {
-  setLoading(false);
-}
-
-    // } catch (err) {
-    //   setError(
-    //     err?.message ||
-    //       "Unable to login."
-    //   );
-    // } finally {
-    //   setLoading(false);
-    // }
-  };
+    setError(
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      "Unable to login."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleForgot = () => {
     if (embedded) {

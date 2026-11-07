@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from "react";
 
 import {
@@ -8,6 +7,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import {
   ChevronDown,
@@ -20,11 +20,11 @@ import {
   UserRound,
 } from "lucide-react";
 
-import {
-  getUser,
-  isLoggedIn,
-  logout,
-} from "../utils/auth";
+// import {
+//   getUser,
+//   isLoggedIn,
+//   logout,
+// } from "../utils/auth";
 
 import {
   healthLibrary,
@@ -302,6 +302,13 @@ export default function Header({ onOpenAuth }) {
   const navigate = useNavigate();
   const { settings } = useSiteSettings();
 
+   const {
+    user: currentUser,
+    isLoggedIn: loggedIn,
+    loading: authLoading,
+    logout: authLogout,
+  } = useAuth();
+
   const {
   specialities: apiSpecialities,
   loading: specialitiesLoading,
@@ -334,44 +341,6 @@ const specialityMenuItems = apiSpecialities.map((item) => [
   const [mobileKnowledgeOpen, setMobileKnowledgeOpen] =
     useState(false);
 
-  const [loggedIn, setLoggedIn] =
-    useState(isLoggedIn());
-
-  const [currentUser, setCurrentUser] =
-    useState(getUser());
-
-  /* ==========================================
-     UPDATE AUTH STATE
-  ========================================== */
-
-  useEffect(() => {
-    const updateAuth = () => {
-      setLoggedIn(isLoggedIn());
-      setCurrentUser(getUser());
-    };
-
-    window.addEventListener(
-      "akeso-auth-change",
-      updateAuth
-    );
-
-    window.addEventListener(
-      "storage",
-      updateAuth
-    );
-
-    return () => {
-      window.removeEventListener(
-        "akeso-auth-change",
-        updateAuth
-      );
-
-      window.removeEventListener(
-        "storage",
-        updateAuth
-      );
-    };
-  }, []);
 
   /* ==========================================
      CLOSE MENU ON ROUTE CHANGE
@@ -406,20 +375,17 @@ const specialityMenuItems = apiSpecialities.map((item) => [
      LOGOUT
   ========================================== */
 
-  const handleLogout = () => {
-    logout();
+const handleLogout = async () => {
+  try {
+    await authLogout();
 
-    setLoggedIn(false);
-    setCurrentUser(null);
     setMobileOpen(false);
 
-    window.dispatchEvent(
-      new Event("akeso-auth-change")
-    );
-
     navigate("/", { replace: true });
-  };
-
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
   /* ==========================================
      LOGIN
   ========================================== */
@@ -438,21 +404,21 @@ const specialityMenuItems = apiSpecialities.map((item) => [
      OUR DOCTORS PROTECTED NAVIGATION
   ========================================== */
 
-  const handleDoctorsNavigation = () => {
-    closeMobile();
+const handleDoctorsNavigation = () => {
+  closeMobile();
 
-    if (isLoggedIn()) {
-      navigate("/doctors");
-    } else if (onOpenAuth) {
-      onOpenAuth("login", "/doctors");
-    } else {
-      navigate(
-        `/login?redirect=${encodeURIComponent(
-          "/doctors"
-        )}`
-      );
-    }
-  };
+  if (authLoading) return;
+
+  if (loggedIn) {
+    navigate("/doctors");
+  } else if (onOpenAuth) {
+    onOpenAuth("login", "/doctors");
+  } else {
+    navigate(
+      `/login?redirect=${encodeURIComponent("/doctors")}`
+    );
+  }
+};
 
   /* ==========================================
      DESKTOP NAVIGATION STYLES
@@ -755,7 +721,8 @@ const specialityMenuItems = apiSpecialities.map((item) => [
               ================================== */}
 
               <div className="hidden items-center gap-2 xl:flex">
-                {loggedIn ? (
+                {/* {loggedIn ? ( */}
+                {authLoading ? null : loggedIn ? (
                   <>
                     {/* PROFILE */}
                     
@@ -1126,7 +1093,8 @@ const specialityMenuItems = apiSpecialities.map((item) => [
               MOBILE / TABLET PROFILE & LOGOUT
           ================================== */}
 
-          {loggedIn ? (
+          {/* {loggedIn ? ( */}
+          {authLoading ? null : loggedIn ? (
             <>
               {/* MY PROFILE */}
               <button
@@ -1238,17 +1206,6 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 // import { useEffect, useState } from "react";
 
 // import {
@@ -1276,16 +1233,22 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 // } from "../utils/auth";
 
 // import {
-//   specialties,
 //   healthLibrary,
 //   knowledgeCenter,
 //   services,
 //   international,
 // } from "../data/navigation";
 
+// import { useSpecialities } from "../context/SpecialitiesContext";
+// import { getSpecialityIcon } from "../utils/specialityIcon";
+
 // import CallbackModal from "./CallbackModal";
 // import LanguageSwitcher from "./LanguageSwitcher";
 
+// import { useSiteSettings } from "../context/SiteSettingsContext";
+// import defaultLogo from "../assets/home/logo.png";
+
+// import { useTranslation } from "react-i18next";
 // /* ==========================================
 //    DESKTOP DROPDOWN ROW
 // ========================================== */
@@ -1542,8 +1505,22 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 // ========================================== */
 
 // export default function Header({ onOpenAuth }) {
+//   const { t } = useTranslation();
+  
 //   const location = useLocation();
 //   const navigate = useNavigate();
+//   const { settings } = useSiteSettings();
+
+//   const {
+//   specialities: apiSpecialities,
+//   loading: specialitiesLoading,
+// } = useSpecialities();
+
+// const specialityMenuItems = apiSpecialities.map((item) => [
+//   item.name,
+//   item.slug,
+//   getSpecialityIcon(item.name),
+// ]);
 
 //   const [mobileOpen, setMobileOpen] =
 //     useState(false);
@@ -1747,11 +1724,21 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 //               to="/"
 //               className="flex shrink-0 items-center"
 //             >
-//               <img
+//               {/* <img
 //                 src="/logo.png"
 //                 alt="Akeso Global Medical Services"
 //                 className="h-[54px] w-auto object-contain sm:h-[58px] lg:h-[64px] xl:h-[68px]"
-//               />
+//               /> */}
+//               {/* || "/logo.png" */}
+// <img
+//   src={settings.logo || defaultLogo}
+//   alt="Akeso Global Medical Services"
+//   onError={(e) => {
+//     e.currentTarget.onerror = null;
+//     e.currentTarget.src = defaultLogo;
+//   }}
+//   className="h-[54px] w-auto object-contain sm:h-[58px] lg:h-[64px] xl:h-[68px]"
+// />
 //             </Link>
 
 //             {/* ==================================
@@ -1804,7 +1791,8 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 
 //                 {specialityOpen && (
 //                   <DesktopDropdown
-//                     items={specialties.slice(0, 6)}
+//                     // items={specialties.slice(0, 6)}
+//                     items={specialityMenuItems.slice(0, 6)}
 //                     prefix="speciality"
 //                     viewAllPath="/specialities"
 //                     viewAllText="View All Specialities"
@@ -2101,11 +2089,20 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 //             to="/"
 //             onClick={closeMobile}
 //           >
-//             <img
+//             {/* <img
 //               src="/logo.png"
 //               alt="Akeso Global Medical Services"
 //               className="h-[55px] w-auto object-contain"
-//             />
+//             /> */}
+//             <img
+//   src={settings.logo || defaultLogo}
+//   alt="Akeso Global Medical Services"
+//   onError={(e) => {
+//     e.currentTarget.onerror = null;
+//     e.currentTarget.src = defaultLogo;
+//   }}
+//   className="h-[55px] w-auto object-contain"
+// />
 //           </Link>
 
 //           <button
@@ -2149,9 +2146,12 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 //             closeMenu={closeMobile}
 //           >
 //             <div className="space-y-[2px]">
-//               {specialties
+//               {/* {specialties
 //                 .slice(0, 6)
-//                 .map((item) => (
+//                 .map((item) => ( */}
+//                 {specialityMenuItems
+//                   .slice(0, 6)
+//                   .map((item) => (
 //                   <MobileItem
 //                     key={item[1]}
 //                     item={item}
@@ -2444,5 +2444,8 @@ const specialityMenuItems = apiSpecialities.map((item) => [
 //     </>
 //   );
 // }
+
+
+
 
 

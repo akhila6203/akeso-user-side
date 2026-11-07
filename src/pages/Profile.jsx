@@ -11,7 +11,8 @@ import {
   Headphones, AlertCircle
 } from "lucide-react";
 
-import { getUser } from "../utils/auth";
+// import { getUser } from "../utils/auth";
+import { useAuth } from "../context/AuthContext";
 
 const STORAGE_PREFIX = "akeso_patient_profile_demo_v4";
 function getPatientKey(user) {
@@ -551,8 +552,7 @@ function getStoredData(storageKey) {
 }
 
 export default function Profile() {
-  const user = getUser();
-  const storageKey = getPatientKey(user);
+  const { user } = useAuth();
   const [patientId, setPatientId] = useState("");
 
  const STAFF_SECTIONS = [
@@ -919,7 +919,10 @@ function isSameDocumentCategory(doc, category) {
 
   
 // const uploadGroups = SECTION_DOCUMENTS[id] || [];
-const uploadGroups = [];
+// const uploadGroups = [];
+const uploadGroups = ["personal", "passport", "medical"].includes(id)
+  ? SECTION_DOCUMENTS[id] || []
+  : [];
 
 // Get ALL documents uploaded for this particular section by admin or patient.
 const sectionDocuments = documents.filter((doc) =>

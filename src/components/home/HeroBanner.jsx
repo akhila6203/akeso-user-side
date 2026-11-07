@@ -28,26 +28,28 @@ import {
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
-import { isLoggedIn } from "../../utils/auth";
+import { useAuth } from "../../context/AuthContext";
+// import { isLoggedIn } from "../../utils/auth";
 
-import heroDoctor from "../../assets/home/hero-doctor.jpg";
+import heroDoctor from "../../assets/home/hero-doctor.png";
 
 export default function HeroBanner({
   onOpenAuth,
 }) {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
+ 
   const findDoctor = () => {
-    if (isLoggedIn()) {
-      navigate("/doctors");
-      return;
-    }
+  if (loading) return;
 
-    onOpenAuth?.(
-      "login",
-      "/doctors"
-    );
-  };
+  if (user) {
+    navigate("/doctors");
+    return;
+  }
+
+  onOpenAuth?.("login", "/doctors");
+};
 
   return (
     <section

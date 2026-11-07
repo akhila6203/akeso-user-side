@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useContext,
@@ -6,25 +5,41 @@ import {
   useState,
 } from "react";
 
-import { loginUser } from "../services/authService";
-
 import {
-  getUser,
-  isLoggedIn as checkLogin,
-  saveLogin,
-  logout as clearLogin,
-} from "../utils/auth";
+  loginUser,
+  getCurrentUser,
+  logoutUser,
+} from "../services/authService";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() =>
-    checkLogin() ? getUser() : null
-  );
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  /* =========================================
+     CHECK BACKEND COOKIE SESSION
+  ========================================= */
+  const checkSession = async () => {
+    try {
+      const response = await getCurrentUser();
+
+      setUser(response?.user || null);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================================
+     INITIAL SESSION CHECK
+  ========================================= */
   useEffect(() => {
+    checkSession();
+
     const syncAuth = () => {
-      setUser(checkLogin() ? getUser() : null);
+      checkSession();
     };
 
     window.addEventListener(
@@ -32,38 +47,53 @@ export function AuthProvider({ children }) {
       syncAuth
     );
 
-    window.addEventListener("storage", syncAuth);
-
     return () => {
       window.removeEventListener(
         "akeso-auth-change",
         syncAuth
       );
-
-      window.removeEventListener(
-        "storage",
-        syncAuth
-      );
     };
   }, []);
 
+  /* =========================================
+     LOGIN
+  ========================================= */
   const login = async ({ email, password }) => {
-    const data = await loginUser({
+    // Backend sets the HttpOnly cookie.
+    await loginUser({
       email,
       password,
     });
 
-    if (!data?.token || !data?.user) {
-      throw new Error("Invalid login response.");
+    // Fetch the authenticated user from the cookie session.
+    const response = await getCurrentUser();
+
+    if (!response?.user) {
+      throw new Error("Unable to verify login session.");
     }
 
-    saveLogin(data.token, data.user);
+    setUser(response.user);
 
-    return data.user;
+    window.dispatchEvent(
+      new Event("akeso-auth-change")
+    );
+
+    return response.user;
   };
 
-  const logout = () => {
-    clearLogin();
+  /* =========================================
+     LOGOUT
+  ========================================= */
+  const logout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      setUser(null);
+
+      window.dispatchEvent(
+        new Event("akeso-auth-change")
+      );
+    }
   };
 
   return (
@@ -71,6 +101,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         isLoggedIn: Boolean(user),
+        loading,
         login,
         logout,
       }}
@@ -80,6 +111,9 @@ export function AuthProvider({ children }) {
   );
 }
 
+/* =========================================
+   CUSTOM AUTH HOOK
+========================================= */
 export function useAuth() {
   const context = useContext(AuthContext);
 
@@ -96,7 +130,6 @@ export function useAuth() {
 
 
 
-
 // import {
 //   createContext,
 //   useContext,
@@ -104,42 +137,64 @@ export function useAuth() {
 //   useState,
 // } from "react";
 
+// import { loginUser } from "../services/authService";
+
+// import {
+//   getUser,
+//   isLoggedIn as checkLogin,
+//   saveLogin,
+//   logout as clearLogin,
+// } from "../utils/auth";
 
 // const AuthContext = createContext(null);
 
 // export function AuthProvider({ children }) {
-//   const [user, setUser] = useState(() => {
-//     const stored = localStorage.getItem("akeso-user");
-
-//     return stored ? JSON.parse(stored) : null;
-//   });
+//   const [user, setUser] = useState(() =>
+//     checkLogin() ? getUser() : null
+//   );
 
 //   useEffect(() => {
-//     if (user) {
-//       localStorage.setItem(
-//         "akeso-user",
-//         JSON.stringify(user)
-//       );
-//     } else {
-//       localStorage.removeItem("akeso-user");
-//     }
-//   }, [user]);
-
-//   const login = async ({ email }) => {
-//     // TODO: replace with backend API later.
-//     const demoUser = {
-//       id: 1,
-//       name: "Akeso Patient",
-//       email,
+//     const syncAuth = () => {
+//       setUser(checkLogin() ? getUser() : null);
 //     };
 
-//     setUser(demoUser);
+//     window.addEventListener(
+//       "akeso-auth-change",
+//       syncAuth
+//     );
 
-//     return demoUser;
+//     window.addEventListener("storage", syncAuth);
+
+//     return () => {
+//       window.removeEventListener(
+//         "akeso-auth-change",
+//         syncAuth
+//       );
+
+//       window.removeEventListener(
+//         "storage",
+//         syncAuth
+//       );
+//     };
+//   }, []);
+
+//   const login = async ({ email, password }) => {
+//     const data = await loginUser({
+//       email,
+//       password,
+//     });
+
+//     if (!data?.token || !data?.user) {
+//       throw new Error("Invalid login response.");
+//     }
+
+//     saveLogin(data.token, data.user);
+
+//     return data.user;
 //   };
 
 //   const logout = () => {
-//     setUser(null);
+//     clearLogin();
 //   };
 
 //   return (

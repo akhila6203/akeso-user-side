@@ -10,7 +10,8 @@ import {
   Stethoscope,
 } from "lucide-react";
 
-import { isLoggedIn } from "../../utils/auth";
+// import { isLoggedIn } from "../../utils/auth";
+import { useAuth } from "../../context/AuthContext";
 import { getDoctors } from "../../api/doctorsApi";
 import { mapDoctor } from "../../utils/doctorMapper";
 import { getAppointmentLink } from "../../data/doctorsData";
@@ -25,6 +26,7 @@ export default function InternationalDoctors({
   const [doctors, setDoctors] = useState([]);
 const [loading, setLoading] = useState(true);
 const [loadError, setLoadError] = useState("");
+const { user, loading: authLoading } = useAuth();
 
 
 
@@ -206,30 +208,34 @@ const rows = Array.isArray(result)
   ========================================== */
 
   const handleMeetDoctor = (doctor) => {
-    const doctorPath = `/doctors/${doctor.id}`;
+  if (authLoading) return;
 
-    if (isLoggedIn()) {
-      navigate(doctorPath);
-      return;
-    }
+  const doctorPath = `/doctors/${doctor.id}`;
 
-    onOpenAuth?.("login", doctorPath);
-  };
+  if (user) {
+    navigate(doctorPath);
+    return;
+  }
+
+  onOpenAuth?.("login", doctorPath);
+};
 
   /* ==========================================
      VIEW ALL DOCTORS
   ========================================== */
 
   const handleViewAllDoctors = () => {
-    const doctorsPath = "/doctors";
+  if (authLoading) return;
 
-    if (isLoggedIn()) {
-      navigate(doctorsPath);
-      return;
-    }
+  const doctorsPath = "/doctors";
 
-    onOpenAuth?.("login", doctorsPath);
-  };
+  if (user) {
+    navigate(doctorsPath);
+    return;
+  }
+
+  onOpenAuth?.("login", doctorsPath);
+};
 
   return (
     <section className="bg-white py-16 md:py-20">
